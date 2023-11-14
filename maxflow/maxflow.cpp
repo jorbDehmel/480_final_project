@@ -1,11 +1,15 @@
 #include "maxflow.hpp"
 
+// Recursive internal
+vector<edge> get_path(const graph &residual, const int &s, const int &t, set<int> &used);
+
 ////////////////////////////////////////////////////////////////
 // IO operations
 ////////////////////////////////////////////////////////////////
 
 // For debugging
-ostream &operator<<(ostream &strm, graph &what)
+ostream &
+operator<<(ostream &strm, graph &what)
 {
     int i = 0;
     strm << "Graph\n{\n";
@@ -72,8 +76,8 @@ void save_graph(graph &to_save, ostream &strm)
         num_links += item.edges.size();
     }
 
-    strm << to_save.nodes.size() << '\n'
-         << num_links;
+    strm << to_save.nodes.size() << ' '
+         << num_links << '\n';
 
     int i = 0;
     for (auto node : to_save.nodes)
@@ -93,36 +97,8 @@ void save_graph(graph &to_save, ostream &strm)
 // Utilities
 ////////////////////////////////////////////////////////////////
 
-// Returns the residual graph given some capacity and flow
-// graphs
-graph residual_graph(const graph &capacity, graph &flow)
-{
-    graph out = capacity;
-
-    for (int node = 0; node < capacity.nodes.size(); node++)
-    {
-        for (auto edge_item : flow.nodes[node].edges)
-        {
-            out.nodes[node].edges[edge_item.first] -= edge_item.second;
-
-            // If residual is 0, erase this edge
-            // if (out.nodes[node].edges[edge] == 0)
-            // {
-            //      out.nodes[node].edges.erase(edge);
-            // }
-
-            // Error checking
-            if (out.nodes[node].edges[edge_item.first] < 0)
-            {
-                throw runtime_error("Negative residual cannot exist!");
-            }
-        }
-    }
-
-    return out;
-}
-
 // Return the net flow across a path
+// Takes time proportional to the length of the path
 int path_flow(const vector<edge> &path)
 {
     int min = path[0].weight;
@@ -141,43 +117,118 @@ int path_flow(const vector<edge> &path)
 // Returns a valid path from the source to the sink
 vector<edge> get_path(const graph &residual, const int &s, const int &t)
 {
-    int position = s;
+    set<int> used = {s};
+    return get_path(residual, s, t, used);
+}
 
-    // The set of all transitions already taken
-    set<int> taken = {s};
+// Recursive internal
+vector<edge> get_path(const graph &residual, const int &s, const int &t, set<int> &used)
+{
+    // Iterate over options at this point
+    // cout << "On node " << s << " looking for " << t << '\n';
 
-    // The path taken
-    vector<edge> path;
-
-    // Iterate until reaches end (or no options)
-    while (position != t)
+    used.insert(s);
+    for (auto &item : residual.nodes[s].edges)
     {
-        // Choose next edge
-        bool has_taken_path = false;
-        for (auto edge_item : residual.nodes[position].edges)
+        // cout << item.first << ' ' << item.second << '\n';
+
+        if (item.second == 0)
         {
-            // Is an option and is not already in path; Take this edge
-            if (edge_item.second > 0 && taken.count(edge_item.first) == 0)
-            {
-                taken.insert(edge_item.first);
-                path.push_back(edge{edge_item.first, edge_item.second});
-                position = edge_item.first;
-                has_taken_path = true;
-                break;
-            }
+            continue;
         }
 
-        // Termination case for larger program
-        if (!has_taken_path)
+        else if (item.first == t)
         {
-            return vector<edge>{};
+            // Begin complete path
+            // Base case for success
+            vector<edge> out = {edge{item.first, item.second}};
+            return out;
+        }
+
+        else if (used.count(item.first) != 0)
+        {
+            continue;
+        }
+
+        else
+        {
+            // Non-complete path
+            // cout << "Recursive call from " << s << " on link " << item.first << ' ' << item.second << '\n';
+
+            vector<edge> result = get_path(residual, item.first, t, used);
+
+            if (result.size() > 0)
+            {
+                // Got complete path; Return now
+                result.insert(result.begin(), edge{item.first, item.second});
+                return result;
+            }
+
+            // Failure case,
+            // Continue iterating
         }
     }
 
-    return path;
+    // If found no valid paths, return empty
+    // Base case for failure
+    return vector<edge>();
+}
+
+// Get the shorted valid augmenting path using breadth first search
+// of the residual graph. Not recursive.
+vector<edge> get_path_bfs(graph &residual, const int &s, const int &t)
+{
+    // source_index[i] is the node which led to i
+    // If a node is not yet visited by bfs, it will have nothing
+    map<int, int> source_index;
+    queue<int> to_search;
+
+    to_search.push(s);
+
+    while (true)
+    {
+        if (to_search.empty())
+        {
+            // Failure case; Halt algorithm
+            return vector<edge>{};
+        }
+        else if (to_search.front() == t)
+        {
+            // Success case; Break from loop
+            break;
+        }
+        else
+        {
+            // Regular case; Iterate over links
+            int cur = to_search.front();
+            to_search.pop();
+            for (const auto &p : residual.nodes[cur].edges)
+            {
+                if (source_index.count(p.first) == 0 && residual.nodes[cur].edges[p.first] > 0)
+                {
+                    source_index[p.first] = cur;
+                    to_search.push(p.first);
+                }
+            }
+        }
+    }
+
+    // Success case here
+    // Reconstruct shortest path into vector
+    vector<edge> out;
+    int position = t, from;
+    while (position != s)
+    {
+        from = source_index[position];
+        out.insert(out.begin(), edge{position, residual.nodes[from].edges[position]});
+        position = from;
+    }
+
+    return out;
 }
 
 // Returns a zero graph in the shape of the one passed
+// Takes time proportional to the number of edges in the input
 graph zero_graph(const graph &capacities)
 {
     graph out = capacities;
@@ -194,6 +245,7 @@ graph zero_graph(const graph &capacities)
 }
 
 // Adds an augmenting path into a flow graph
+// Takes time proportional to the size of the path
 void add_augmenting_path(const vector<edge> &path, graph &flow, const int &s)
 {
     if (path.size() == 0)
@@ -211,51 +263,114 @@ void add_augmenting_path(const vector<edge> &path, graph &flow, const int &s)
     }
 }
 
+// Like add_augmenting_path, but for a residual graph
+// Runs in time proportional to the length of the path
+void subtract_augmenting_path(const vector<edge> &path, graph &residuals, const int &s)
+{
+    if (path.size() == 0)
+    {
+        return;
+    }
+
+    int net_flow = path_flow(path);
+    int position = s;
+
+    for (const auto &p : path)
+    {
+        residuals.nodes[position].edges[p.to] -= net_flow;
+        position = p.to;
+    }
+}
+
 ////////////////////////////////////////////////////////////////
 // Actual routines
 ////////////////////////////////////////////////////////////////
 
 // Returns the maxflow of a given graph
 // using the Ford-Fulkerson algorithm
+// n := number NODES, e := number EDGES, f := max flow,
+// p := number augmenting paths
+// O(e + 3*p*len(path) + e) = O(2e + 3pl) ~ O(pe)
 int ford_fulkerson(graph &capacities, const int &s, const int &t)
 {
     vector<edge> path;
-
     graph flow, residual;
-    flow = zero_graph(capacities);
+    int out;
+
+    flow = zero_graph(capacities); // O(e)
     residual = capacities;
 
     // While a augmenting path exists
-    do
+    // int total_path_length = 0;
+    do // do p times
     {
-        /// Get augmenting path
-        path = get_path(residual, s, t);
+        // Get augmenting path
+        path = get_path(residual, s, t); // O(len(path)), worst case e
+        // total_path_length += path.size();
 
         // Add augmenting path to flow
-        add_augmenting_path(path, flow, s);
+        add_augmenting_path(path, flow, s); // O(len(path))
 
         // Recompute residual
-        residual = residual_graph(capacities, flow);
+        subtract_augmenting_path(path, residual, s); // O(len(path))
 
     } while (path.size() > 0);
 
     // Get total flow out of source node
     // (equal to total flow into destination node,
     // as well as total maximum network flow)
-    int out = 0;
-    for (const auto &p : flow.nodes[0].edges)
+    // worst case e
+    out = 0;
+    for (const auto &p : flow.nodes[s].edges)
     {
         out += p.second;
     }
+
+    // cout << "FF had total path length = " << total_path_length << '\n';
 
     return out;
 }
 
 // Returns the maxflow of a given graph
 // using the Edmonds Karp algorithm
-int edmonds_karp(graph &on, const int &s, const int &t)
+int edmonds_karp(graph &capacities, const int &s, const int &t)
 {
-    return 0;
+    vector<edge> path;
+    graph flow, residual;
+    int out;
+
+    flow = zero_graph(capacities); // O(e)
+    residual = capacities;
+
+    // While a augmenting path exists
+    // int total_path_length = 0;
+    do // do p times
+    {
+        // Get augmenting path via breadth first search
+        path = get_path_bfs(residual, s, t); // O(len(path))
+        // total_path_length += path.size();
+
+        // Add augmenting path to flow
+        add_augmenting_path(path, flow, s); // O(len(path))
+
+        // Recompute residual
+        subtract_augmenting_path(path, residual, s); // O(len(path))
+
+    } while (path.size() > 0);
+
+    // Get total flow out of source node
+    // (equal to total flow into destination node,
+    // as well as total maximum network flow)
+    // worst case e
+    out = 0;
+    for (const auto &p : flow.nodes[s].edges)
+    {
+        out += p.second;
+    }
+
+    // cout << "EK had total path length = " << total_path_length << '\n';
+
+    return out;
 }
 
 ////////////////////////////////////////////////////////////////

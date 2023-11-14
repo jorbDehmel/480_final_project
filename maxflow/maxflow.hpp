@@ -21,6 +21,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <queue>
 using namespace std;
 
 /**
@@ -95,17 +96,6 @@ graph load_graph(istream &strm);
 void save_graph(graph &to_save, ostream &strm);
 
 /**
- * @brief Creates the residual graph (remaining capacity graph)
- *        given the capacity graph and the current flow graph
- *
- * @param capacity The total capacity graph
- * @param flow The current flow graph
- *
- * @return The residual graph `(capacity - flow)`
- */
-graph residual_graph(const graph &capacity, const graph &flow);
-
-/**
  * @brief Creates a zero graph in the shape of the passed graph
  *
  * @param capacities The capacity graph to copy
@@ -123,8 +113,17 @@ graph zero_graph(const graph &capacities);
 void add_augmenting_path(const vector<edge> &path, graph &flow, const int &s);
 
 /**
+ * @brief Subtracts an augmenting path from a residual graph
+ *
+ * @param path The augmenting path to subtract
+ * @param residuals The residual graph to modify
+ * @param s The index of the starting node
+ */
+void subtract_augmenting_path(const vector<edge> &path, graph &residuals, const int &s);
+
+/**
  * @brief Returns the first valid augmenting path from the
- *        source to the sink
+ *        source to the sink. Recursive.
  *
  * @param residual The residual (remaining unused flow) graph
  * @param s The index of the starting node
@@ -134,6 +133,19 @@ void add_augmenting_path(const vector<edge> &path, graph &flow, const int &s);
  *         path
  */
 vector<edge> get_path(const graph &residual, const int &s, const int &t);
+
+/**
+ * @brief Returns the shorted valid augmenting path from the
+ *        source to the sink, using breadth first search.
+ *
+ * @param residual The residual (remaining unused flow) graph
+ * @param s The index of the starting node
+ * @param t The index of the ending node
+ *
+ * @return A vector of edges representing the shortest valid
+ *         augmenting path
+ */
+vector<edge> get_path_bfs(const graph &residual, const int &s, const int &t);
 
 /**
  * @brief Gets the net flow along an augmenting path

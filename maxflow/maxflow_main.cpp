@@ -19,22 +19,22 @@ int main(int argc, char *argv[])
     ifstream file;
     graph g;
     int s, t;
-    chrono::_V2::system_clock::time_point start, end;
-    unsigned long long FF_elapsed_ns, EK_elapsed_ns;
+    // chrono::_V2::system_clock::time_point start, end;
+    unsigned long long FF_elapsed_ns = 0, EK_elapsed_ns = 0;
     int FF_result, EK_result;
     double percentage_faster;
 
-    // Title
-    cout << "Maxflow using Ford-Fulkerson and Edmonds-Karp\n"
-         << "---------------------------------------------\n\n";
-
     // Get file to load from
-    if (argc == 2)
+    if (argc >= 2)
     {
         filepath = argv[1];
     }
     else
     {
+        // Title
+        cout << "Maxflow using Ford-Fulkerson and Edmonds-Karp\n"
+             << "---------------------------------------------\n\n";
+
         cout << "Enter filepath: ";
         cin >> filepath;
     }
@@ -50,14 +50,22 @@ int main(int argc, char *argv[])
     // Load graph
     g = load_graph(file);
 
-    cout << "'" << filepath << "' contains " << g.nodes.size() << " nodes.\n\n";
-
     // Close input file
     file.close();
 
+    // Display info
+    cout << "'" << filepath << "' contains " << g.nodes.size() << " nodes.\n";
+
     // Get s and t
-    cout << "Source (s) node index: ";
-    cin >> s;
+    if (argc >= 3)
+    {
+        s = atoi(argv[2]);
+    }
+    else
+    {
+        cout << "Source (s) node index: ";
+        cin >> s;
+    }
 
     if (s < 0 || s >= g.nodes.size())
     {
@@ -66,8 +74,18 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    cout << "Sink (t) node index:   ";
-    cin >> t;
+    if (argc >= 4)
+    {
+        t = atoi(argv[3]);
+    }
+    else
+    {
+        cout << "Sink (t) node index:   ";
+        cin >> t;
+    }
+
+    cout << "\ns=" << s << "\n"
+         << "t=" << t << "\n";
 
     if (t < 0 || t >= g.nodes.size() || t == s)
     {
@@ -76,19 +94,24 @@ int main(int argc, char *argv[])
         return 3;
     }
 
-    cout << '\n';
+    cout << '\n'
+         << flush;
 
     // Perform FF and time
-    start = chrono::high_resolution_clock::now();
-    FF_result = ford_fulkerson(g, s, t);
-    end = chrono::high_resolution_clock::now();
-    FF_elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    {
+        auto start = chrono::high_resolution_clock::now();
+        FF_result = ford_fulkerson(g, s, t);
+        auto end = chrono::high_resolution_clock::now();
+        FF_elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    }
 
     // Perform EK and time
-    start = chrono::high_resolution_clock::now();
-    EK_result = edmonds_karp(g, s, t);
-    end = chrono::high_resolution_clock::now();
-    EK_elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    {
+        auto start = chrono::high_resolution_clock::now();
+        EK_result = edmonds_karp(g, s, t);
+        auto end = chrono::high_resolution_clock::now();
+        EK_elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    }
 
     // Output results
     cout << "FF result: " << FF_result << '\n'

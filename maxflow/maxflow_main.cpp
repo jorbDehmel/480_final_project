@@ -6,11 +6,11 @@ jdehmel@outlook.com
 jedehmel@mavs.coloradomesa.edu
 */
 
-#include <chrono>
-#include <iostream>
-#include <fstream>
-#include <string>
 #include "maxflow.hpp"
+#include <chrono>
+#include <fstream>
+#include <iostream>
+#include <string>
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     int s, t;
     // chrono::_V2::system_clock::time_point start, end;
     unsigned long long FF_elapsed_ns = 0, EK_elapsed_ns = 0;
-    int FF_result, EK_result;
+    int FF_result, EK_result, FF_iterations, EK_iterations;
     double percentage_faster;
 
     // Get file to load from
@@ -94,13 +94,12 @@ int main(int argc, char *argv[])
         return 3;
     }
 
-    cout << '\n'
-         << flush;
+    cout << '\n' << flush;
 
     // Perform FF and time
     {
         auto start = chrono::high_resolution_clock::now();
-        FF_result = ford_fulkerson(g, s, t);
+        // FF_result = ford_fulkerson(g, s, t, FF_iterations);
         auto end = chrono::high_resolution_clock::now();
         FF_elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
     }
@@ -108,7 +107,7 @@ int main(int argc, char *argv[])
     // Perform EK and time
     {
         auto start = chrono::high_resolution_clock::now();
-        EK_result = edmonds_karp(g, s, t);
+        EK_result = edmonds_karp(g, s, t, EK_iterations);
         auto end = chrono::high_resolution_clock::now();
         EK_elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
     }
@@ -116,10 +115,14 @@ int main(int argc, char *argv[])
     // Output results
     cout << "FF result: " << FF_result << '\n'
          << "FF ns:     " << FF_elapsed_ns << '\n'
-         << "FF ms:     " << (FF_elapsed_ns) / (double)(1'000'000) << "\n\n"
+         << "FF ms:     " << (FF_elapsed_ns) / (double)(1'000'000) << '\n'
+         << "FF passes: " << FF_iterations << '\n'
+         << "FF f*/p:   " << FF_result / (double)(FF_iterations) << "\n\n"
          << "EK result: " << EK_result << '\n'
          << "EK ns:     " << EK_elapsed_ns << '\n'
-         << "EK ms:     " << (EK_elapsed_ns) / (double)(1'000'000) << "\n\n";
+         << "EK ms:     " << (EK_elapsed_ns) / (double)(1'000'000) << '\n'
+         << "EK passes: " << EK_iterations << '\n'
+         << "EK f*/p:   " << EK_result / (double)(EK_iterations) << "\n\n";
 
     // Show speed comparison
     percentage_faster = (((FF_elapsed_ns) / (double)(EK_elapsed_ns)) - 1.0) * 100.0;

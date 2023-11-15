@@ -18,10 +18,10 @@
 #define MAXFLOW_HPP
 
 #include <iostream>
-#include <vector>
-#include <set>
 #include <map>
 #include <queue>
+#include <set>
+#include <vector>
 using namespace std;
 
 /**
@@ -47,10 +47,13 @@ struct edge
  * @var graph_node::edges
  * A map of the edges contained within. The key is the index of
  * the linked node, and the value is the weight of that edge.
+ * @var graph_node::nodes_having_backwards_edges
+ * A set of all nodes which contain links to this node.
  */
 struct graph_node
 {
     map<int, int> edges;
+    set<int> nodes_having_backwards_edges;
 };
 
 // A graph of graph_nodes
@@ -126,26 +129,28 @@ void subtract_augmenting_path(const vector<edge> &path, graph &residuals, const 
  *        source to the sink. Recursive.
  *
  * @param residual The residual (remaining unused flow) graph
+ * @param capacities The capacity graph
  * @param s The index of the starting node
  * @param t The index of the ending node
  *
  * @return A vector of edges representing a valid augmenting
  *         path
  */
-vector<edge> get_path(const graph &residual, const int &s, const int &t);
+vector<edge> get_path(graph &residual, graph &capacities, const int &s, const int &t);
 
 /**
  * @brief Returns the shorted valid augmenting path from the
  *        source to the sink, using breadth first search.
  *
  * @param residual The residual (remaining unused flow) graph
+ * @param capacities The capacity graph
  * @param s The index of the starting node
  * @param t The index of the ending node
  *
  * @return A vector of edges representing the shortest valid
  *         augmenting path
  */
-vector<edge> get_path_bfs(const graph &residual, const int &s, const int &t);
+vector<edge> get_path_bfs(const graph &residual, graph &capacities, const int &s, const int &t);
 
 /**
  * @brief Gets the net flow along an augmenting path
@@ -163,10 +168,11 @@ int path_flow(const vector<edge> &path);
  * @param on The graph to operate on
  * @param s The index of the starting node
  * @param t The index of the ending node
+ * @param iterations Replaced by the number of iterations
  *
  * @return The max flow across the graph from `s` to `t`
  */
-int ford_fulkerson(graph &on, const int &s, const int &t);
+int ford_fulkerson(graph &on, const int &s, const int &t, int &iterations);
 
 /**
  * @brief Returns the maxflow of a given graph the Edmonds Karp
@@ -175,9 +181,10 @@ int ford_fulkerson(graph &on, const int &s, const int &t);
  * @param on The graph to operate on
  * @param s The index of the starting node
  * @param t The index of the ending node
+ * @param iterations Replaced by the number of iterations
  *
  * @return The max flow across the graph from `s` to `t`
  */
-int edmonds_karp(graph &on, const int &s, const int &t);
+int edmonds_karp(graph &on, const int &s, const int &t, int &iterations);
 
 #endif

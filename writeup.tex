@@ -59,7 +59,7 @@
     node upwards to become the new root. In this case, the
     height of the tree uniformly increases by one for all leaf
     nodes. This means that the height of the tree is precisely
-    equal for all leaf nodes no matter what.
+    equal for all leaf nodes.
 
     Now we will examine the equivalency between red-black trees
     and 2-3-4 trees. We will show that each node in a 2-3-4 tree
@@ -107,12 +107,12 @@
     Again, this red-black tree has the same height as its 2-3-4
     tree equivalent: $1$. Since we have accounted for all
     possible variations of red-black subtree herein, we can use
-    the above rules to translate between red-black tree and
-    2-3-4 tree. Therefore, any statement we make about 2-3-4
+    the above rules to translate between red-black trees and
+    2-3-4 trees. Therefore, any statement we make about 2-3-4
     trees holds for red-black trees.
 
     In the best-case scenario, a 2-3-4 tree (post 4-node
-    splitting) will containing $n$ nodes will have a height of
+    splitting) containing $n$ nodes will have a height of
     $log_3(n)$, where every node is a 3-node. At worst case, it
     will have a height of $log_2(n)$, where every node is a
     2-node. Since red-black and 2-3-4 trees are equivalent, we
@@ -128,8 +128,143 @@
 \section{Max Flow Algorithms}
 
 \subsection{Theoretical Analysis}
+    % Jordan
+
+    We will begin by analyzing the time and space complexity
+    of the \textbf{Ford-Fulkerson algorithm} for max flow, and
+    use this to motivate the segue into the Edmonds-Karp
+    algorithm.
+
+    The Ford-Fulkerson algorithm works by repeatedly finding an
+    augmenting path (a path which can traverse the graph from
+    the source node to the sink node and contains some amount of
+    unused capacity) and adding the minimal flow across this
+    path to the flow of each edge within. When no such path can
+    be found, the graph has reached its maximal flow, and an
+    answer to the problem can be returned. The pseudocode for
+    the Ford-Fulkerson algorithm is shown below.
+
+\begin{verbatim}
+// 1) Initialize
+Set all edges in flow graph to zero
+Set residual graph to input graph
+
+// 2) Iterate
+While an augmenting path exists:
+    Get augmenting path
+    Add augmenting path to flow graph
+    Subtract augmenting path from residual graph
+End while
+
+// 3) Output
+Set net flow to zero
+For edge exiting source node:
+    Increment net flow by edge flow
+End for
+
+Return net flow
+\end{verbatim}
+
+    The most ambiguous part of this process is
+    \verb|get augmenting path|. This vagueness has lead some to
+    classify this process the Ford-Fulkerson method, rather than
+    algorithm, as the time complexity could be vastly changed by
+    the specific implementation of this line. For clarity, we
+    will continue to refer to it as an algorithm. In our
+    implementation, we will simply interpret this line to mean
+    "choose the first augmenting path"- more specifically, 
+    "at each node, if multiple augmenting paths are present,
+    choose the one leading to the lowest-indexed node from this
+    point". That is to say, if the paths \verb|0 -> 1 -> 2| and
+    \verb|0 -> 3 -> 2| both exists, our initial algorithm would
+    choose the first.
+
+    Using these definitions and the above pseudocode, we can
+    begin algorithmic analyses of the algorithm. We will call
+    the set of all vertices $\mathbb{V}$, and the number of
+    vertices $\vert \mathbb{V} \vert$. Similarly, the set of all
+    edges and the number thereof are $\mathbb{E}$ and
+    $\vert \mathbb{E} \vert$, respectively.
+    
+    The algorithm starts by initializing its variables, marked
+    section 1 in the above code. These operations take
+    $\vert \mathbb{E} \vert$ each. Next, the algorithm iterates
+    over the augmenting paths. For each iteration, it gets an
+    augmenting path, adds the augmenting path to the flow, and
+    subtracts it from the residual. This means that this section
+    runs with time proportional to the number of augmenting
+    paths times two times the length of the current path. Each
+    pass of this iteration is guaranteed to add at least 1 unit
+    to the net flow, so there will be at most $f^*$ iterations,
+    where $f^*$ is the maximal flow. The final section of the
+    algorithm (section 3, which computes the calculated net
+    flow), runs in time proportional to the number of edges
+    leading from the source node, which is at most
+    $\vert \mathbb{E} \vert$.
+
+    Tying everything together, we can say that the
+    Ford-Fulkerson algorithm runs in time proportional to
+
+\[
+    2 \cdot \vert \mathbb{E} \vert + f^* \cdot \vert \mathbb{E} \vert + \vert \mathbb{E} \vert
+\]
+
+    Converting this to big-O notation, we find that the running
+    time complexity of the Ford-Fulkerson algorithm as listed
+    here is $O(f^* \vert \mathbb{E} \vert )$.
+
+    As written here, the Ford-Fulkerson algorithm uses several
+    auxiliary variables of equal size to the input graph.
+    However, were the preservation of the input graph not
+    necessary, the operations using these variables could easily
+    be modified to work by modifying the input graph. This
+    means that, under proper optimization, the Ford-Fulkerson
+    algorithm runs with space complexity $O(1)$.
+
+    Having now finished analyzing the Ford-Fulkerson algorithm,
+    we can move on to the Edmonds-Karp algorithm. As proven
+    above, the Ford-Fulkerson algorithm can only be proved to
+    converge upon the solution in time proportional to the max
+    flow value itself. Thus, it is particularly unsuited for
+    graphs with large maximal flows. Additionally, the original
+    specification for the Ford-Fulkerson algorithm left the
+    specific method used to select the next augmenting path
+    unspecified. The solution to both of these problems comes
+    in the form of the \textbf{Edmonds-Karp algorithm}.
+
+    The Edmonds-Karp algorithm is a specific implementation of
+    the Ford-Fulkerson method / algorithm wherein the next
+    augmenting path to be chosen is the shortest one. This
+    shortest path is chosen via breadth-first-search of the
+    network. This allows the time complexity of the algorithm
+    to become independent from $f*$.
+
+    The pseudocode for the Edmonds-Karp algorithm is listed
+    below.
+
+\begin{verbatim}
+// 1) Initialize
+Set all edges in flow graph to zero
+Set residual graph to input graph
+
+// 2) Iterate
+While an augmenting path exists:
+    Get shortest augmenting path via BFS
+    Add augmenting path to flow graph
+    Subtract augmenting path from residual graph
+End while
+
+// 3) Output
+Set net flow to zero
+For edge exiting source node:
+    Increment net flow by edge flow
+End for
+
+Return net flow
+\end{verbatim}
 
 \subsection{Practical Implementation Details}
+    % Jordan
 
 \begin{center}
     \includegraphics[width=0.65\textwidth]{graph} \\
@@ -158,34 +293,33 @@
 \subsection{Red-Black Trees}
 
 \subsection{Max Flow Algorithms}
+    % Jordan
 
-\begin{verbatim}
-6 nodes:
-FF ms:     0.057353
-EK ms:     0.05099
-EK is 12.4789% faster than FF.
+    Below is a graph of running times from a series of
+    experimental runs of the Ford-Fulkerson (FF) and
+    Edmonds-Karp (EK) algorithms on various randomly-generated
+    graphs.
 
-100 nodes:
-FF ms:     15.4379
-EK ms:     5.45683
-EK is 182.909% faster than FF.
+\begin{center}
+    \includegraphics[width=0.65\textwidth]{mf_algorithm_comparison} \\
+    The Ford-Fulkerson (FF) algorithm vs the Edmonds-Karp (EK)
+    algorithm on randomly generated graphs of various size. \\
+    \vskip 1cm
+\end{center}
 
-1,000 nodes:
-FF ms:     157.864
-EK ms:     26.9243
-EK is 486.325% faster than FF.
+    Clearly, the Edmonds-Karp algorithm performs reliably
+    better than the original Ford-Fulkerson one, especially for
+    large graphs.
 
-10,000 nodes:
-FF ms:     1168.17
-EK ms:     502.373
-EK is 132.53% faster than FF.
+    The below graph shows the number of augmenting paths present
+    in graphs of various sizes.
 
-100,000 nodes:
-FF ms:     23405.1
-EK ms:     4711.56
-EK is 396.758% faster than FF.
-
-\end{verbatim}
+\begin{center}
+    \includegraphics[width=0.65\textwidth]{mf_passes_comparison.png} \\
+    The Ford-Fulkerson (FF) algorithm vs the Edmonds-Karp (EK)
+    algorithm on various graphs, by number of passes required. \\
+    \vskip 1cm
+\end{center}
 
 \section{Conclusion}
 

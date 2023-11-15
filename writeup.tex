@@ -36,6 +36,43 @@
 
 \subsection{Theoretical Analysis}
 
+    \textbf{Discuss the theoretical aspects of Red-Black Trees, including time and space
+	complexity, best/worst/average-case scenarios, and any important properties.}
+	
+	Red-Black Trees are a special type of binary search tree that are self-balancing: they maintain their balance
+    during insertions and deletions.
+    
+    Just as for any other type of binary search trees, for each node of a Red-Black Tree, all nodes in its left subtree have a value less than the node, and all nodes in its right subtree have a value greater than the node.
+    
+    Red-Black Trees have additional properties:
+    
+    \begin{itemize}
+    	\item Each node of the tree is either colored red or black
+    	\item The root and all leaves are black
+    	\item Having two consecutive red nodes is not allowed on any path from the root to a leaf.
+    	\item Every path from a node to any of its leaves contains the same number of black nodes.
+    \end{itemize}
+    
+    Now, I will discuss the time complexity of Red-Black Trees.
+    
+    \begin{itemize}
+    	\item For the search operation, it has a time complexity of O(1). It happens when the element being searched is found at the root of the tree.
+    	It has an average and worst time complexity of O(log n), because the tree maintains balance, resulting in a logarithmic height.
+    	
+    	\item Concerning the insertion operation, it has a time complexity of O(1) in its best case, in which the new node is inserted at the root.
+    	Its average and worst time complexities are O(log n). On average, the tree needs to be balanced, keeping the height logarithmic.
+    	In the worst case, the tree needs restructuring, which takes logarithmic time.
+    	
+    	\item For the deletion operation, we have the exact same time complexities than for the insertion operation, for the same reasons.
+    	
+    	\item Finally, rotation operations are done in constant time.
+    \end{itemize}
+    
+    Finally, I will expose the space complexity of Red-Black Trees.
+    Each node in a Red-Black Tree requires constant space for the key, value, color information, and pointers to its children and parent. The overall space complexity is O(n), where n is the number of nodes in the tree.
+    
+    Moreover, during operations like insertion and deletion, some additional space may be required for temporary variables or recursive function calls.
+    The auxiliary space complexity is O(log n) in the worst case, where log n is the height of the tree.
 \subsection{Practical Implementation Details}
 
 \subsection{Real-World Application}

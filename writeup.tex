@@ -303,11 +303,140 @@ Return net flow
 \subsection{Practical Implementation Details}
     % Jordan
 
+    The pseudocode from the previous section is fairly easy to
+    translate into a viable program. However, we must first
+    define how we will represent a weighted graph.
+
+    We will represent a graph via a \verb|C++| vector of graph
+    nodes. In turn, we will represent a graph node as a struct
+    containing a \verb|C++| map mapping a node index to the
+    weight on the edge associated with it. Additionally, a graph
+    node will have a list of nodes which have edges pointing to
+    it.
+
+    We will represent an augmenting path as a vector of pairs of
+    integers, with the first item being the index of the next
+    node to visit and the second integer being the weight on
+    that edge. For this representation to work, we also need to
+    keep track of the initial node. We will use the same type
+    graph data structure to represent the flow graph, the
+    capacity graph, and the residual graph. To load graphs, we
+    will use edge lists. Specifically, we will have the number
+    of nodes, followed by the number of edges. After this, each
+    edge will be three integers: The source node, the
+    destination node, and the weight.
+
 \begin{center}
-    \includegraphics[width=0.65\textwidth]{graph} \\
+    \includegraphics[width=0.4\textwidth]{graph} \\
     A benchmark graph for max-flow. \\
     \vskip 1cm
 \end{center}
+
+    Represented as an edge list, this graph would look like
+    this:
+
+\begin{verbatim}
+    6 7
+    0 1 4
+    0 4 3
+    1 2 4
+    4 5 6
+    2 4 3
+    2 3 2
+    5 3 6
+\end{verbatim}
+
+    Next, let's formalize the process by which we select
+    augmenting paths for both algorithms. In the Ford-Fulkerson
+    algorithm, we will use the following method.
+
+\begin{verbatim}
+Function to find the first augmenting path
+Takes: The residual graph, start node, and sink node
+Returns: The first augmenting path
+
+    Let current = start node
+    Let path = empty list
+    Let visited = empty set
+
+    While current != end node, do
+        Insert current into visited
+
+        For edge leading from current in order:
+            If edge destination is in visited
+                Continue
+            End if
+
+            If edge has additional flow remaining:
+                Append edge onto path
+                Current = edge destination
+                Break from for loop
+            End if
+        End for
+    End while
+
+    Return path
+
+End function
+
+\end{verbatim}
+
+    This returns the first available path, regardless of its
+    length. Similarly, the Edmonds-Karp algorithm uses the
+    pseudocode below to find the shortest available augmenting
+    path.
+
+\begin{verbatim}
+Function to find the shortest augmenting path via BFS
+Takes: The residual graph, start node, and sink node
+Returns: The shortest augmenting path
+
+    Let to_visit = queue
+    Let came_from = array of size count(nodes) filled with -1
+
+    push source node onto to_visit
+
+    // Breadth-First Search
+
+    While to_visit is not empty, do
+        Let current = front of to_visit
+        Pop front off of to_visit
+        Insert current into visited
+
+        For edge leading from current:
+            If came_from[edge destination] == -1:
+                came_from[edge destination] = current
+                push edge destination onto to_visit
+
+                If edge destination is sink node:
+                    Break from for loop
+                End if
+            End if
+        End for
+    End while
+
+    // Reconstruct path
+
+    Let path = empty list
+    Let current = sink node
+
+    While current != source node, do
+        If came_from[current] == -1:
+            Return empty path
+        End if
+
+        Insert edge from came_from[current] to current at front of path
+    End while
+
+    Return path
+
+End function
+
+\end{verbatim}
+
+    These two pseudocode functions complete our algorithm for
+    the Ford-Fulkerson and the Edmonds-Karp algorithm. The
+    \verb|C++| used in this project is a translation of this.
 
 \subsection{Real-World Application}
 
@@ -357,6 +486,10 @@ Return net flow
     algorithm on various graphs, by number of passes required. \\
     \vskip 1cm
 \end{center}
+
+    Although the difference is not always extreme, the
+    Edmonds-Karp algorithm reliably runs at worst as well as
+    Ford-Fulkerson, and usually much better.
 
 \section{Conclusion}
 

@@ -274,7 +274,9 @@ Return net flow
     augmenting path to be chosen is the shortest one. This
     shortest path is chosen via breadth-first-search of the
     network. This allows the time complexity of the algorithm
-    to become independent from $f*$.
+    to become independent from $f*$. More specifically, the
+    Edmonds-Karp algorithm runs in time complexity
+    $O(\vert \mathbb{V} \vert \vert \mathbb{E} \vert ^2)$.
 
     The pseudocode for the Edmonds-Karp algorithm is listed
     below.
@@ -299,6 +301,19 @@ End for
 
 Return net flow
 \end{verbatim}
+
+    Both algorithms as described here create copies of their
+    input graphs for the flow and residual graphs. Additionally,
+    neither the Ford-Fulkerson nor the Edmonds-Karp method of
+    augmenting path discovery requires space larger than the
+    size of the input graph. Thus, we can say that both
+    algorithms run with space complexity bounded by the size of
+    the input graph. Expressed in big-O notation, this appears
+    as follows:
+
+    \[
+        O( \vert \mathbb{E} \vert + \vert \mathbb{V} \vert )
+    \]
 
 \subsection{Practical Implementation Details}
     % Jordan
@@ -489,18 +504,68 @@ End function
 
     Although the difference is not always extreme, the
     Edmonds-Karp algorithm reliably runs at worst as well as
-    Ford-Fulkerson, and usually much better.
+    Ford-Fulkerson, and usually much better. From this data, it
+    would seem that EK is the best choice. However, this is not
+    always the case.
+
+\begin{verbatim}
+In a graph w/ 1000 nodes and 631216 edges
+1 <= weight <= 10
+
+FF ns:     22,950,597,300
+FF ms:     22,950.6
+FF passes: 2,732
+
+EK ns:     151,082,372,212
+EK ms:     151,082
+EK passes: 1,243
+
+\end{verbatim}
+
+    The above output exemplifies a case in which the
+    Ford-Fulkerson algorithm outperforms the Edmonds-Karp one.
+    Here, EK ran in 151 seconds, while FF took only 23 seconds.
+    This is because of the disparity between $f^*$ (3,161),
+    $\vert \mathbb{E} \vert$ (631,216), and
+    $\vert \mathbb{V} \vert$ (1,000). Since FF runs in time
+    proportional to $f^* \cdot \vert \mathbb{E} \vert$, we can
+    expect it to run in approximately
+    $3,161 \cdot 631,216 = 1,995,273,776$ operations. EK, on the
+    other hand, will run in about
+    $1,000 \cdot 631,216^2 = 398,433,638,656,000$ operations-
+    $5$ orders of magnitude more! Luckily, EK only performed $1$
+    order of magnitude worse than FF in our experiment, but this
+    is still a non-trivial performance cost in what is supposed
+    to be the better algorithm.
+
+    Thus, the choice between FF and EK is more nuanced than it
+    first would seem.
 
 \section{Conclusion}
 
+\newpage
 \section{References}
 
-\begin{itemize}
-    \item https://sedgewick.io/wp-content/themes/sedgewick/papers/2008LLRB.pdf
-    \item https://www.cs.purdue.edu/homes/ayg/CS251/slides/chap13b.pdf
-    \item https://www.geeksforgeeks.org/ford-fulkerson-algorithm-for-maximum-flow-problem/
-    \item https://brilliant.org/wiki/ford-fulkerson-algorithm/    
-    \item https://brilliant.org/wiki/edmonds-karp-algorithm/
-\end{itemize}
+\begin{verbatim}
+[1] "2-3-4 Trees and Red- Black Trees.” Purdue University,
+        www.cs.purdue.edu/homes/ayg/CS251/slides/chap13b.pdf.
+        Accessed 28 Nov. 2023. 
+
+[2] "Edmonds-Karp Algorithm.” Brilliant Math; Science Wiki,
+        brilliant.org/wiki/edmonds-karp-algorithm/. Accessed 28
+        Nov. 2023. 
+
+[3] "Ford-Fulkerson Algorithm for Maximum Flow Problem.”
+        GeeksforGeeks, GeeksforGeeks, 1 June 2023,
+        www.geeksforgeeks.org/ford-fulkerson-algorithm-for-maximum-flow-problem/. 
+
+[4] "Ford-Fulkerson Algorithm.” Brilliant Math; Science Wiki,
+        brilliant.org/wiki/ford-fulkerson-algorithm/. Accessed 28
+        Nov. 2023. 
+
+[5] Sedgewick, Robert. Left-Leaning Red-Black Trees,
+        sedgewick.io/wp-content/themes/sedgewick/papers/2008LLRB.pdf.
+        Accessed 28 Nov. 2023. 
+\end{verbatim}
 
 \end{document}

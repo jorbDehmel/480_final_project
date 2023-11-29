@@ -396,6 +396,8 @@ int ford_fulkerson(graph &capacities, const int &s, const int &t, int &iteration
         path = get_path(residual, capacities, s, t); // O(len(path)), worst case e
         out += path_flow(path);
 
+        cout << "FF " << iterations << '\t' << out << '\n';
+
         // Add augmenting path to flow
         add_augmenting_path(path, flow, s); // O(len(path))
 
@@ -427,6 +429,8 @@ int edmonds_karp(graph &capacities, const int &s, const int &t, int &iterations)
         // Get augmenting path via breadth first search
         path = get_path_bfs(residual, capacities, s, t); // O(len(path))
         out += path_flow(path);
+
+        cout << "EK " << iterations << '\t' << out << '\n';
 
         // Add augmenting path to flow
         add_augmenting_path(path, flow, s); // O(len(path))

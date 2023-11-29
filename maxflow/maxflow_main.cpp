@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     // Perform FF and time
     {
         auto start = chrono::high_resolution_clock::now();
-        // FF_result = ford_fulkerson(g, s, t, FF_iterations);
+        FF_result = ford_fulkerson(g, s, t, FF_iterations);
         auto end = chrono::high_resolution_clock::now();
         FF_elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
     }

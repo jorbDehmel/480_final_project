@@ -3,19 +3,19 @@ Generates random large graphs
 Not necessarily acyclic
 */
 
+#include "maxflow.hpp"
+#include <fstream>
 #include <iostream>
 #include <string>
-#include <fstream>
-#include "maxflow.hpp"
 using namespace std;
 
-const static int W_MIN = 10;
-const static int W_MAX = 100;
+const static int W_MIN = 1;
+const static int W_MAX = 10;
 
 int main(int argc, char *argv[])
 {
     graph g;
-    int n = 0, e = 0;
+    unsigned long long n = 0, e = 0;
     string file;
 
     if (argc != 4)

@@ -10,12 +10,14 @@
 % - RB tree theory question 2
 % - RB tree comparative analysis
 
-% - Maxflow theory questions            <- Jordan
+% - Maxflow theory question 2           <- Jordan
 % - Maxflow real-world application      <- Kate
 
 \documentclass[12pt]{amsart}
 
 \usepackage[margin=0.75in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
 
 % Image setup
 \usepackage{graphicx}
@@ -511,7 +513,59 @@ End function
     algorithm terminates and converges to the maximum flow in
     finite time, even for non-integer capacities.}
 
-    % TODO - Jordan
+    An augmenting path is a path through the graph from the
+    source node to the sink node such that a certain non-zero
+    amount of flow may be added to the net flow between these
+    nodes. An augmenting path is found in relation to a residual
+    graph, which is a graph representing the remaining possible
+    flow for each edge in the capacity graph. The residual graph
+    is initialized as the capacity graph, and each additional
+    augmenting path decreases the remaining flow in the residual
+    graph by its net flow.
+
+    The net flow across an augmenting path is defined as the
+    smallest residual in any edge along that path.
+
+    It is important to note that the net flow across the graph
+    increases monotonically as a function of number of passes-
+    That is to say that, for each additional augmenting path,
+    the net flow must increase. In fact, the terminal condition
+    of the algorithm is only met when no augmenting path with a
+    net flow above zero can be found. Thus, any failure of this
+    condition will result in the algorithm halting.
+
+    Let us assume the following:
+    \begin{itemize}
+        \item With zero augmenting paths, the net flow is zero
+        \item An augmenting path must increase the net flow
+        \item The net flow is a finite real number greater than
+            or equal to zero
+        \item The net flow is equal to the sum of the net flows
+            of the augmenting paths
+    \end{itemize}
+
+    Mathematically:
+    \[
+    \begin{aligned}
+        p \in \mathbb{R}^n , &\left[ \forall p_i \in p \right] p_i > 0 \\
+        f^* \in \mathbb{R}: 0 &\le f^* < \infty \\
+        \sum_{i = 0}^n { p_i } &= f^* \\
+        &\therefore \\
+        \sum_{i = 0}^n p_i < \infty , &\left[ \forall p_i \in p \right] p_i > 0 \\
+        &\therefore \\
+        n &< \infty \\
+    \end{aligned}
+    \]
+
+    That is to say, that since the net flow is a sum of non-zero
+    real numbers and it is itself a finite real number, it must
+    be a finite sum. This implies that the number of augmenting
+    paths must be finite, implying that the algorithm converges
+    in finite time.
+
+    Since we only assumed that the net flow across an augmenting
+    path is a real number, this proves the convergence of this
+    method upon both integer and non-integer weights.
 
     \textbf{Explain the Min-Cut Max-Flow Theorem and its
     significance in the context of network flows. How can this
@@ -519,6 +573,14 @@ End function
     flow network?}
 
     % TODO - Jordan
+
+    The Min-Cut Max-Flow Theorem states that the cost of the
+    min-cut across a network is the same as the maximal flow
+    across that network.
+
+    Since we have just defined several algorithms for finding
+    the max flow across a network, the theorem allows us to also
+    use these algorithms to find the minimum cut.
 
 \section{Real-World Problem Solving}
 
@@ -567,12 +629,10 @@ End function
 In a graph w/ 1000 nodes and 631216 edges
 1 <= weight <= 10
 
-FF ns:     22,950,597,300
 FF ms:     22,950.6
 FF passes: 2,732
 
-EK ns:     151,082,372,212
-EK ms:     151,082
+EK ms:     151,082.0
 EK passes: 1,243
 
 \end{verbatim}

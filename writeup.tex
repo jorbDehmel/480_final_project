@@ -1,8 +1,17 @@
-% Who is doing what:
-% Jordan - 2.4.1 question 1, max-flow
-% Darrin - RB tree
-% Logan  - 2.1.1, 2.2.1
-% Kate   - Example of max-flow
+% TODO:
+% Please mark yourself here and push
+% if you are in progress on something!
+
+% - RB tree conclusion
+% - Real-world problem solving
+
+% - RB trees practical implementation   <- Darrin
+% - RB trees real-world application
+% - RB tree theory question 2
+% - RB tree comparative analysis
+
+% - Maxflow theory questions            <- Jordan
+% - Maxflow real-world application      <- Kate
 
 \documentclass[12pt]{amsart}
 
@@ -15,7 +24,7 @@
 \title{Exploration and Analysis of Red-Black Trees and Max Flow
     Algorithms}
 \author{Jordan Dehmel, Kate Eckhart, Logan Humbert, Darrin Miller}
-\date{Fall 2023}
+\date{December 4th, 2023}
 
 \begin{document}
 
@@ -30,7 +39,42 @@
     explore several algorithms for the later, and provide
     experimental comparative analysis of their performances.
 
+\newpage
 \section{Introduction}
+
+\subsection{Efficient Tree-Based Lookup Structures}
+
+    The Binary Search Tree (BST) is a vital data structure for
+    efficient lookups in large lookup tables. However, they have
+    their issues. While a BST can provide lookups in logarithmic
+    time in the best-case scenario, this can quickly devolve
+    into linear time given suboptimal insertion order. For
+    instance, if data is inserted into a BST in monotonically
+    ascending order, each node in the tree will have only right
+    children. This quickly devolves into linear lookup time!
+    This weakness motivates the need for a tree data structure
+    which can be proven to avoid this worst-case scenario.
+
+    Several such tree-based data structures exist; The 2-3-4
+    tree and the red-black tree. Both of these structures can
+    be proven to remain perfectly balanced, allowing a
+    guaranteed logarithmic lookup time. In this paper, we will
+    explore the links between these two data structures, and
+    perform a deeper analysis of the red-black tree.
+
+\subsection{Graph Flow Algorithms}
+
+    Determining the maximum flow across a directed weighted
+    graph is vital in numerous fields, especially since many
+    problems are convertible to graph problems. For instance, if
+    we were to visualize a computer network as a directed graph
+    where the nodes are computers and the weights are
+    bandwidths, it would be desirable to determine the maximum
+    possible flow of data between a given two nodes. Graph Flow
+    Algorithms solve just this problem. The two we will be
+    exploring in this paper are the Ford-Fulkerson method and
+    the Edmonds-Karp algorithm, both of which use the underlying
+    mechanic of augmenting paths to determine the maximal flow.
 
 \section{Red-Black Trees}
 
@@ -73,9 +117,12 @@
     
     Moreover, during operations like insertion and deletion, some additional space may be required for temporary variables or recursive function calls.
     The auxiliary space complexity is O(log n) in the worst case, where log n is the height of the tree.
+
 \subsection{Practical Implementation Details}
+    % TODO
 
 \subsection{Real-World Application}
+    % TODO
 
 \subsection{Theoretical Questions}
 
@@ -162,10 +209,11 @@
     Explain the trade-offs and advantages of using Red-Black
     trees in these contexts.}
 
+    % TODO
+
 \section{Max Flow Algorithms}
 
 \subsection{Theoretical Analysis}
-    % Jordan
 
     We will begin by analyzing the time and space complexity
     of the \textbf{Ford-Fulkerson algorithm} for max flow, and
@@ -316,7 +364,6 @@ Return net flow
     \]
 
 \subsection{Practical Implementation Details}
-    % Jordan
 
     The pseudocode from the previous section is fairly easy to
     translate into a viable program. However, we must first
@@ -455,6 +502,8 @@ End function
 
 \subsection{Real-World Application}
 
+    % TODO
+
 \subsection{Theoretical Questions}
 
     \textbf{Describe the concept of augmenting paths and
@@ -462,20 +511,26 @@ End function
     algorithm terminates and converges to the maximum flow in
     finite time, even for non-integer capacities.}
 
+    % TODO - Jordan
+
     \textbf{Explain the Min-Cut Max-Flow Theorem and its
     significance in the context of network flows. How can this
     theorem be used to find a maximum flow and minimum cut in a
     flow network?}
 
+    % TODO - Jordan
+
 \section{Real-World Problem Solving}
+
+    % TODO
 
 \section{Comparative Analysis and Reporting}
 
 \subsection{Red-Black Trees}
 
-\subsection{Max Flow Algorithms}
-    % Jordan
+    % TODO
 
+\subsection{Max Flow Algorithms}
     Below is a graph of running times from a series of
     experimental runs of the Ford-Fulkerson (FF) and
     Edmonds-Karp (EK) algorithms on various randomly-generated
@@ -542,6 +597,36 @@ EK passes: 1,243
     first would seem.
 
 \section{Conclusion}
+
+\subsection{Red-Black Trees}
+    
+    % TODO
+
+\subsection{Maxflow}
+
+    The EK algorithm was developed as an instance of the FF
+    algorithm, specifically optimized to remove FF's complexity
+    reliance upon $f^*$. Thus, in cases where $f^*$ is very
+    large in comparison to $\vert \mathbb{E} \vert$ and
+    $\vert \mathbb{V} \vert$, EK will be the more efficient
+    choice. It will require fewer augmenting paths, and each
+    augmenting path will increase the total flow more. However,
+    each of these augmenting paths will be more costly to
+    compute. Thus, if $f^*$ is very small in comparison to the
+    number of nodes and edges, FF will run more efficiently.
+
+    It is notable that, even in the failure case described
+    above, EK will still require fewer augmenting paths than FF.
+    It is simply the cost of computing these paths which causes
+    EK to fail.
+
+    Since it is rare that $f^* \cdot \vert \mathbb{E} \vert$ is
+    smaller than
+    $\vert \mathbb{V} \vert \vert \mathbb{E} \vert ^2$, EK will
+    most often be the correct choice for the maxflow problem.
+    However, the wisest approach would be to implement both
+    algorithms, and switch to FF if it is computed to be more
+    efficient.
 
 \newpage
 \section{References}

@@ -1,6 +1,6 @@
 *.out
 *.o
-.vscode
+*.gz
 *.aux
 *.log
 *.toc

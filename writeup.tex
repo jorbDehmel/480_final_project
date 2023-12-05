@@ -10,7 +10,6 @@
 % - RB tree theory question 2			<- Logan
 % - RB tree comparative analysis        <- darrin
 
-% - Maxflow theory question 2           <- Jordan
 % - Maxflow real-world application      <- Kate
 
 \documentclass[12pt]{amsart}
@@ -318,7 +317,8 @@ Return net flow
     Ford-Fulkerson algorithm runs in time proportional to
 
 \[
-    2 \cdot \vert \mathbb{E} \vert + f^* \cdot \vert \mathbb{E} \vert + \vert \mathbb{E} \vert
+    2 \cdot \vert \mathbb{E} \vert + f^* \cdot \vert \mathbb{E}
+        \vert + \vert \mathbb{E} \vert
 \]
 
     Converting this to big-O notation, we find that the running
@@ -572,11 +572,13 @@ End function
     Mathematically:
     \[
     \begin{aligned}
-        p \in \mathbb{R}^n , &\left[ \forall p_i \in p \right] p_i > 0 \\
+        p \in \mathbb{R}^n , &\left[ \forall p_i \in p \right]
+            p_i > 0 \\
         f^* \in \mathbb{R}: 0 &\le f^* < \infty \\
         \sum_{i = 0}^n { p_i } &= f^* \\
         &\therefore \\
-        \sum_{i = 0}^n p_i < \infty , &\left[ \forall p_i \in p \right] p_i > 0 \\
+        \sum_{i = 0}^n p_i < \infty , &\left[ \forall p_i \in p
+            \right] p_i > 0 \\
         &\therefore \\
         n &< \infty \\
     \end{aligned}
@@ -597,15 +599,103 @@ End function
     theorem be used to find a maximum flow and minimum cut in a
     flow network?}
 
-    % TODO - Jordan
-
     The Min-Cut Max-Flow Theorem states that the cost of the
     min-cut across a network is the same as the maximal flow
-    across that network.
+    across that network. Since we have just defined several
+    algorithms for finding the max flow across a network, the
+    theorem allows us to also use these algorithms to find the
+    minimum cut.
 
-    Since we have just defined several algorithms for finding
-    the max flow across a network, the theorem allows us to also
-    use these algorithms to find the minimum cut.
+    This theorem means that, given the min-cut or the max-flow,
+    you can easily derive the other. This makes it very
+    significant, as it allows our FF and EK algorithms to have
+    twice as many applications.
+
+    The min-cut of a network is vital for identifying weak
+    points- For instance, the point in a computer network which
+    is most likely to fail. It can also be used to identify weak
+    points in other people's networks. For instance, the text
+    mentioned times during the cold war where the min-cut
+    algorithm was used to identify the method of severing soviet
+    supply lines while costing the least and causing the lease
+    amount of damage. In this case, nodes would be cities or
+    railway junctions, and edges would be railway lines. The
+    weight would be some value representing the cost to destroy
+    a given line.
+
+    The following proof of the mincut-maxflow theorem is
+    paraphrased from source \verb|[6]|.
+
+    Consider an arbitrary weighted directed graph $G$. Consider
+    the solution flow value $f^*$ computed via the FF algorithm.
+    Let $R$ be the final residual graph after the application of
+    this algorithm. As usual, assume the source node is $s$ and
+    the sink / target node is $t$. We will denote the set of all
+    nodes reachable in $R$ from $s$ as $R_s$, and the set of all
+    nodes reachable in $R$ from $t$ as $R_t$ (equivalent to
+    $R - R_s$ or $R^c$). We will denote a cut across $G$ by
+    defining the set containing the source node $S$ and the set
+    containing the sink node $T$. These sets are disjoint, and
+    together represent the graph.
+
+    The capacity $c$ of a cut separating $G$ into $S$ and $T$ is
+    determined by the formula below.
+
+    \begin{center}
+    From source 6:
+    \end{center}
+    
+    \[
+        c(S, T) = \Sigma_{ \left( u, v \right) \in S \times T }
+            c_{uv}
+    \]
+
+    In English, $c$ is equal to the sum of the capacities of the
+    edges which connect $S$ to $T$.
+
+    If the capacity of the mincut were to be less than the
+    maxflow, the maxflow would never be able to flow beyond the
+    "crunch point" which is the mincut. Because of this, we know
+    that $c(R_s, R_t) \ge f^*$. From here, we must prove that
+    the capacity of the mincut must not be greater than the
+    maxflow.
+
+    For the capacity $c(R_s, R_t)$ to be equal to $f^*$ (that is
+    to say, for the min-cut to be equal to the max-flow), the
+    following must be true.
+
+    $netflow(A) = outflow(A) - inflow(A)$ for any subset A.
+    $netflow(G) = f^*$. Thus, for $c(R_s, R_t) = f^*$,
+    $c(R_s, R_t) = outflow(R_s) - inflow(R_t)$. For the cut
+    $(R_s, R_t)$ to completely sever contact between $s$ and
+    $t$, the following must hold.
+
+    \begin{itemize}
+        \item There must be no edges from $R_s$ to $R_t$ with
+            remaining capacity.
+        \item There must be no edges from $R_t$ to $R_s$ with
+            nonzero flow.
+    \end{itemize}
+
+    If the first condition were not true, there would exist an
+    additional augmenting path from $s$ to $t$ via a forward
+    edge, and the maxflow algorithm would have failed. Thus, the
+    first condition must be true.
+
+    If the second condition were not true, there would exist a
+    possible backwards edge allowing an additional augmenting
+    path, and the maxflow algorithm would be similarly violated.
+    Thus, the second condition must also be true.
+
+    Because of these conditions, there must not be any possible
+    augmenting paths leading to or from the cut. This means that
+    no additional network flow could be added to the graph.
+    Thus, the current flow across the cut is maximal. Since the
+    current flow across the cut is equal to the capacity of the
+    cut, we now know that the the capacity of the mincut must
+    not be greater than the maxflow. This allows us to narrow
+    down our previous statement even further into the final
+    $c(R_s, R_t) = f^*$.
 
 \section{Real-World Problem Solving}
 
@@ -736,6 +826,12 @@ EK passes: 1,243
 [5] Sedgewick, Robert. Left-Leaning Red-Black Trees,
         sedgewick.io/wp-content/themes/sedgewick/papers/2008LLRB.pdf.
         Accessed 28 Nov. 2023. 
+
+[6] Christos H. Papadimitriou, Kenneth Steiglitz (1998).
+        "6.1 The Max-Flow, Min-Cut Theorem". Combinatorial
+        Optimization: Algorithms and Complexity. Dover. pp.
+        120–128. ISBN 0-486-40258-4.
+
 \end{verbatim}
 
 \end{document}

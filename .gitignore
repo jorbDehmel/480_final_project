@@ -4,5 +4,7 @@
 *.aux
 *.log
 *.toc
+.vscode/
 maxflow/data
 maxflow/fig.py
+red-black-tree/rbt

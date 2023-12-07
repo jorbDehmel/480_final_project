@@ -123,7 +123,19 @@
     % TODO
 
 \subsection{Real-World Application}
-    % TODO
+   Red-Black trees find multiple real-world applications, and one prominent example is their use in the Completely Fair Scheduler (CFS), a vital component of the Linux kernel responsible for managing the execution of tasks without real-time constraints. Its primary objective is to ensure a fair distribution of CPU time among competing processes, promoting equitable access to system resources.
+   
+   In the context of the CFS, Red-Black trees play a crucial role in maintaining an efficiently sorted order of runnable processes based on their execution time.
+   
+   They offer efficient insertion, deletion, and search operations in logarithmic time. This characteristic is essential for managing a dynamic list of processes that need to be sorted based on their time requirements.
+   
+   Moreover, Red-Black trees maintain a balanced structure, ensuring that the height of the tree remains logarithmic. This balance is crucial for maintaining consistent and predictable performance in operations, preventing worst-case scenarios that could degrade the scheduler's overall efficiency.
+   
+   Also, the CFS algorithm relies on the sorted order maintained by the Red-Black tree. When selecting the next task to execute, CFS efficiently picks the left-most (minimum) task from the tree. This operation is performed rapidly due to the balanced nature of Red-Black trees, contributing to the scheduler's responsiveness.
+   
+   The Red-Black tree also allows inserting/deleting tasks without compromising performance. The self-balancing properties of Red-Black trees ensure that the tree structure remains optimal even as processes enter or exit the scheduling queue.
+   
+   In summary, the use of Red-Black trees in the Completely Fair Scheduler demonstrates their  importance in designing efficient and fair process scheduling systems within operating systems like Linux. Their ability to maintain a sorted order of processes and facilitate quick task selection significantly contributes to the overall performance and responsiveness of the system.
 
 \subsection{Theoretical Questions}
 

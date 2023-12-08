@@ -25,7 +25,6 @@ private:
 	NodePtr TNULL;
 
 	// initializes the nodes with appropirate values
-	// all the pointers are set to point to the null pointer
 	void initializeNULLNode(NodePtr node, NodePtr parent) {
 		node->data = 0;
 		node->parent = parent;
@@ -64,10 +63,13 @@ private:
 		}
 		comparisons++;
 		if (key < node->data) {
-			return searchTree(node->left, key);
+			NodePtr leftResult = searchTree(node->left, key);
+			return leftResult == TNULL ? nullptr : leftResult;
 		} 
-		return searchTree(node->right, key);
+		NodePtr rightResult = searchTree(node->right, key);
+		return rightResult == TNULL ? nullptr : rightResult;
 	}
+
 
 	// fix the rb tree modified by the delete operation
 	void fixDelete(NodePtr x) {
@@ -163,6 +165,7 @@ private:
 			} else {
 				node = node->left;
 			}
+			comparisons++;
 		}
 
 		if (z == TNULL) {
@@ -288,30 +291,29 @@ public:
 	}
 
 	// Pre-Order traversal
-	// Node->Left Subtree->Right Subtree
+	// Node->Left->Right
 	void preorder() {
 		preOrder(this->root);
 	}
 
 	// In-Order traversal
-	// Left Subtree -> Node -> Right Subtree
+	// Left->Node->Right
 	void inorder() {
 		inOrder(this->root);
 	}
 
 	// Post-Order traversal
-	// Left Subtree -> Right Subtree -> Node
+	// Left->Right->Node
 	void postorder() {
 		postOrder(this->root);
 	}
 
-	// search the tree for the key k
-	// and return the corresponding node
+	//Search for value k
 	NodePtr searchTree(int k) {
 		return searchTree(this->root, k);
 	}
 
-	// find the node with the minimum key
+	// return node with min value
 	NodePtr minimum(NodePtr node) {
 		while (node->left != TNULL) {
 			node = node->left;
@@ -319,7 +321,7 @@ public:
 		return node;
 	}
 
-	// find the node with the maximum key
+	// return node with max value
 	NodePtr maximum(NodePtr node) {
 		while (node->right != TNULL) {
 			node = node->right;
@@ -365,8 +367,7 @@ public:
 		x->parent = y;
 	}
 
-	// insert the key to the tree in its appropriate position
-	// and then fix the tree
+	// insert the key to the tree in its appropriate position then fix the tree
 	void insert(int key) {
 		// Ordinary Binary Search Insertion
 		NodePtr node = new Node;
@@ -425,7 +426,7 @@ public:
 		deleteNode(this->root, data);
 	}
 
-	// print the tree structure on the screen
+	// print the tree structure
 	void prettyPrint() {
 	    if (root) {
     		print(this->root, "", true);
@@ -439,14 +440,17 @@ public:
 };
 
 
-#define ARRAY_SIZE 100
 int main() {
+	const int ARRAY_SIZE = 10000000;
 	RBTree bst;
 	int array[ARRAY_SIZE];
 	srand(time(NULL));
 	for (int i=0; i<ARRAY_SIZE; i++){
 		array[i] = rand() % 10000;
 	}
+
+
+	//Insert
 	auto begin = chrono::high_resolution_clock::now();
 	for (int i = 0; i < ARRAY_SIZE; i++)
 	{
@@ -454,13 +458,69 @@ int main() {
 	}
 	auto end = chrono::high_resolution_clock::now();
 	auto elapsed = chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
-	cout << "Time to insert " << ARRAY_SIZE << " elements: " << elapsed << " nanoseconds" << endl; 
-	cout << "Totoal Comparisons to insert " << ARRAY_SIZE << " elements: " << comparisons << " comparisons" << endl;
-	cout << "Average Comparisons per element: " << float(comparisons)/ARRAY_SIZE << endl;
-	cout << "The Theoretical Insetion O(log(n)) is: " << log2(float(ARRAY_SIZE)) << endl;
-	cout << "Total bytes used for Tree: " << bst.calculateMemoryUsage() << endl;
-	cout << "Size of each node in Tree: " << sizeof(Node) << endl;
-	cout << "Theoretical Space complexityO(n) for " << ARRAY_SIZE << " elements: " << ARRAY_SIZE*sizeof(Node) << endl;
+	cout << "---------INSERTION-----------------------------------------------" << endl;
+	cout << "Time to insert " << ARRAY_SIZE << " elements: 				" << elapsed << " nanoseconds" << endl; 
+	cout << "Total Comparisons to insert " << ARRAY_SIZE << " elements: 		" << comparisons << endl;
+	cout << "Average Comparisons per element: 			" << float(comparisons)/ARRAY_SIZE << endl;
+	cout << "The Theoretical Insetion O(log(n)) is: 			" << log2(float(ARRAY_SIZE)) << endl;
+	cout << "Total bytes used for Tree: 				" << bst.calculateMemoryUsage() << endl;
+	cout << "Size of each node in Tree: 				" << sizeof(Node) << endl;
+	cout << "Theoretical Space complexity O(n) for " << ARRAY_SIZE << " elements:	" << ARRAY_SIZE*sizeof(Node) << endl;
+	cout << "-------------------------------------------------------------------" << endl;
+
+	//Search
+	int array_jump = ARRAY_SIZE * 0.2;
+    int search_array[5] = {array[0],array[array_jump],array[2*array_jump],array[3*array_jump],array[4*array_jump]};
+	comparisons = 0;
+	NodePtr result;
+	begin = chrono::high_resolution_clock::now();
+	for(int i = 0; i < 5; i++) {
+		result = bst.searchTree(search_array[i]);
+		if (result == nullptr) {
+			cout << search_array[i] << " Not found in tree" << endl;
+		} else {
+			//cout << search_array[i] << " Found in tree" << endl;
+		}
+	}
+	end = chrono::high_resolution_clock::now();
+	elapsed = chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+	cout << "-----------Searching-------------------------------------------" << endl;
+	cout << "Total Time to complete 5 searches:			" << elapsed << " nanoseconds" << endl;
+	cout << "Total Comparisons for 5 searches: 			" << comparisons << endl;
+	cout << "Average Comparisons per search:				" << float(comparisons)/5 << endl;
+	cout << "Theoretical complexity for search(O(logn)):		" << log2(ARRAY_SIZE) << endl;
+	cout << "-------------------------------------------------------------------" << endl;
+
+
+	//Delete
+	comparisons = 0;
+	begin = chrono::high_resolution_clock::now();
+	for(int i = 0; i < 5; i++) {
+		result = bst.searchTree(search_array[i]);
+		if (result == nullptr) {
+			cout << search_array[i] << " Not found in tree" << endl;
+		} else {
+			//cout << search_array[i] << " Found in tree" << endl;
+		}
+	}
+	end = chrono::high_resolution_clock::now();
+	elapsed = chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+	elapsed = chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+	cout << "-----------Deleting-------------------------------------------" << endl;
+	cout << "Total Time to complete 5 deletions:			" << elapsed << " nanoseconds" << endl;
+	cout << "Total Comparisons for 5 deletions: 			" << comparisons << endl;
+	cout << "Average Comparisons per deletions:			" << float(comparisons)/5 << endl;
+	cout << "Theoretical complexity for deletions(O(logn)):		" << log2(ARRAY_SIZE) << endl;
+	cout << "-------------------------------------------------------------------" << endl;
+
+
 	//bst.prettyPrint();
+
+
 	return 0;
 }
+
+
+/* This code is derivative of the code found at this git repo
+https://github.com/Bibeknam/algorithmtutorprograms/blob/master/data-structures/red-black-trees/RedBlackTree.cpp
+some parts have been implemented independent of this code base but the deletion section comes from this code*/

@@ -441,7 +441,7 @@ public:
 
 
 int main() {
-	const int ARRAY_SIZE = 10000000;
+	const int ARRAY_SIZE = 1000000;
 	RBTree bst;
 	int array[ARRAY_SIZE];
 	srand(time(NULL));

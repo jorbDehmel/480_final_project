@@ -144,6 +144,24 @@
 \subsection{Practical Implementation Details}
 
     % TODO - Darrin
+    For the implementation of a Red-Black Tree (RB tree), several steps closely 
+    resemble those of a classic Binary Search Tree (BST). However, the efficiency
+     gains over standard BSTs arise from the tree's balanced construction. 
+     Special attention and additional steps are required during node insertion 
+     to maintain the tree's balance and consequently ensure guaranteed performance.
+
+    The process begins with the creation of a new node to hold the incoming data. 
+    The node is initialized with the provided key, and its color is set to red, 
+    adhering to Red-Black Tree rules. Traversing the tree from the root, the 
+    algorithm locates the potential parent for the new node. Upon finding the 
+    suitable spot in the tree, the new node's parent is assigned, and its position 
+    (left or right child) is determined. Special cases, such as handling the root 
+    node and checking for the existence of a grandparent, are managed accordingly. 
+    Notably, balancing the tree post-insertion is vital. The fixInsert function 
+    rectifies any violations to the Red-Black Tree properties. It analyzes 
+    different cases involving the parent and grandparent's colors, 
+    performing rotations and recoloring to maintain the tree's balance.
+    Similar steps would be required for deletions as well.
 
 \subsection{Real-World Application}
    Red-Black trees find multiple real-world applications, and

@@ -21,7 +21,8 @@
 
 \title{Exploration and Analysis of Red-Black Trees and Max Flow
     Algorithms}
-\author{Jordan Dehmel, Kate Eckhart, Logan Humbert, Darrin Miller}
+\author{Jordan Dehmel, Kate Eckhart, Logan Humbert, Darrin
+    Miller}
 \date{December 4th, 2023}
 
 \begin{document}
@@ -78,62 +79,118 @@
 
 \subsection{Theoretical Analysis}
 
-    \textbf{Discuss the theoretical aspects of Red-Black Trees, including time and space
-	complexity, best/worst/average-case scenarios, and any important properties.}
+    \textbf{Discuss the theoretical aspects of Red-Black Trees,
+    including time and space complexity, best/worst/average-case
+    scenarios, and any important properties.}
 	
-	Red-Black Trees are a special type of binary search tree that are self-balancing: they maintain their balance
-    during insertions and deletions.
+	Red-Black Trees are a special type of binary search tree
+    that are self-balancing: they maintain their balance during
+    insertions and deletions.
     
-    Just as for any other type of binary search trees, for each node of a Red-Black Tree, all nodes in its left subtree have a value less than the node, and all nodes in its right subtree have a value greater than the node.
+    Just as for any other type of binary search trees, for each
+    node of a Red-Black Tree, all nodes in its left subtree have
+    a value less than the node, and all nodes in its right
+    subtree have a value greater than the node.
     
     Red-Black Trees have additional properties:
     
     \begin{itemize}
-    	\item Each node of the tree is either colored red or black
+    	\item Each node of the tree is either colored red or
+            black
     	\item The root and all leaves are black
-    	\item Having two consecutive red nodes is not allowed on any path from the root to a leaf.
-    	\item Every path from a node to any of its leaves contains the same number of black nodes.
+    	\item Having two consecutive red nodes is not allowed on
+            any path from the root to a leaf.
+    	\item Every path from a node to any of its leaves
+            contains the same number of black nodes.
     \end{itemize}
     
     Now, I will discuss the time complexity of Red-Black Trees.
     
     \begin{itemize}
-    	\item For the search operation, it has a time complexity of O(1). It happens when the element being searched is found at the root of the tree.
-    	It has an average and worst time complexity of O(log n), because the tree maintains balance, resulting in a logarithmic height.
+    	\item For the search operation, it has a time complexity
+            of $O(1)$. It happens when the element being
+            searched is found at the root of the tree. It has an
+            average and worst time complexity of $O(log n)$,
+            because the tree maintains balance, resulting in a
+            logarithmic height.
     	
-    	\item Concerning the insertion operation, it has a time complexity of O(1) in its best case, in which the new node is inserted at the root.
-    	Its average and worst time complexities are O(log n). On average, the tree needs to be balanced, keeping the height logarithmic.
-    	In the worst case, the tree needs restructuring, which takes logarithmic time.
+    	\item Concerning the insertion operation, it has a time
+            complexity of $O(1)$ in its best case, in which the
+            new node is inserted at the root. Its average and
+            worst time complexities are $O(log n)$. On average,
+            the tree needs to be balanced, keeping the height
+            logarithmic. In the worst case, the tree needs
+            restructuring, which takes logarithmic time.
     	
-    	\item For the deletion operation, we have the exact same time complexities than for the insertion operation, for the same reasons.
+    	\item For the deletion operation, we have the exact same
+            time complexities than for the insertion operation,
+            for the same reasons.
     	
-    	\item Finally, rotation operations are done in constant time.
+    	\item Finally, rotation operations are done in constant
+            time.
     \end{itemize}
     
-    Finally, I will expose the space complexity of Red-Black Trees.
-    Each node in a Red-Black Tree requires constant space for the key, value, color information, and pointers to its children and parent. The overall space complexity is O(n), where n is the number of nodes in the tree.
+    Finally, I will expose the space complexity of Red-Black
+    Trees. Each node in a Red-Black Tree requires constant space
+    for the key, value, color information, and pointers to its
+    children and parent. The overall space complexity is $O(n)$,
+    where $n$ is the number of nodes in the tree.
     
-    Moreover, during operations like insertion and deletion, some additional space may be required for temporary variables or recursive function calls.
-    The auxiliary space complexity is O(log n) in the worst case, where log n is the height of the tree.
+    Moreover, during operations like insertion and deletion,
+    some additional space may be required for temporary
+    variables or recursive function calls. The auxiliary space
+    complexity is $O(log n)$ in the worst case, where log n is
+    the height of the tree.
 
 \subsection{Practical Implementation Details}
 
     % TODO - Darrin
 
 \subsection{Real-World Application}
-   Red-Black trees find multiple real-world applications, and one prominent example is their use in the Completely Fair Scheduler (CFS), a vital component of the Linux kernel responsible for managing the execution of tasks without real-time constraints. Its primary objective is to ensure a fair distribution of CPU time among competing processes, promoting equitable access to system resources.
+   Red-Black trees find multiple real-world applications, and
+   one prominent example is their use in the Completely Fair
+   Scheduler (CFS), a vital component of the Linux kernel
+   responsible for managing the execution of tasks without
+   real-time constraints. Its primary objective is to ensure a
+   fair distribution of CPU time among competing processes,
+   promoting equitable access to system resources.
    
-   In the context of the CFS, Red-Black trees play a crucial role in maintaining an efficiently sorted order of runnable processes based on their execution time.
+   In the context of the CFS, Red-Black trees play a crucial
+   role in maintaining an efficiently sorted order of runnable
+   processes based on their execution time.
    
-   They offer efficient insertion, deletion, and search operations in logarithmic time. This characteristic is essential for managing a dynamic list of processes that need to be sorted based on their time requirements.
+   They offer efficient insertion, deletion, and search
+   operations in logarithmic time. This characteristic is
+   essential for managing a dynamic list of processes that need
+   to be sorted based on their time requirements.
    
-   Moreover, Red-Black trees maintain a balanced structure, ensuring that the height of the tree remains logarithmic. This balance is crucial for maintaining consistent and predictable performance in operations, preventing worst-case scenarios that could degrade the scheduler's overall efficiency.
+   Moreover, Red-Black trees maintain a balanced structure,
+   ensuring that the height of the tree remains logarithmic.
+   This balance is crucial for maintaining consistent and
+   predictable performance in operations, preventing worst-case
+   scenarios that could degrade the scheduler's overall
+   efficiency.
    
-   Also, the CFS algorithm relies on the sorted order maintained by the Red-Black tree. When selecting the next task to execute, CFS efficiently picks the left-most (minimum) task from the tree. This operation is performed rapidly due to the balanced nature of Red-Black trees, contributing to the scheduler's responsiveness.
+   Also, the CFS algorithm relies on the sorted order maintained
+   by the Red-Black tree. When selecting the next task to
+   execute, CFS efficiently picks the left-most (minimum) task
+   from the tree. This operation is performed rapidly due to the
+   balanced nature of Red-Black trees, contributing to the
+   scheduler's responsiveness.
    
-   The Red-Black tree also allows inserting/deleting tasks without compromising performance. The self-balancing properties of Red-Black trees ensure that the tree structure remains optimal even as processes enter or exit the scheduling queue.
+   The Red-Black tree also allows inserting/deleting tasks
+   without compromising performance. The self-balancing
+   properties of Red-Black trees ensure that the tree structure
+   remains optimal even as processes enter or exit the
+   scheduling queue.
    
-   In summary, the use of Red-Black trees in the Completely Fair Scheduler demonstrates their  importance in designing efficient and fair process scheduling systems within operating systems like Linux. Their ability to maintain a sorted order of processes and facilitate quick task selection significantly contributes to the overall performance and responsiveness of the system.
+   In summary, the use of Red-Black trees in the Completely Fair
+   Scheduler demonstrates their  importance in designing
+   efficient and fair process scheduling systems within
+   operating systems like Linux. Their ability to maintain a
+   sorted order of processes and facilitate quick task selection
+   significantly contributes to the overall performance and
+   responsiveness of the system.
 
 \subsection{Theoretical Questions}
 
@@ -220,32 +277,60 @@
     Explain the trade-offs and advantages of using Red-Black
     trees in these contexts.}
 
-    To begin with, I will discuss the use of Red-Black trees in modern databases.
-    Firstly, Red-Black trees provide efficient search and retrieval operations with a time complexity of O(log n). This makes them well-suited for databases, where quick access to data is crucial.
+    To begin with, I will discuss the use of Red-Black trees in
+    modern databases. Firstly, Red-Black trees provide efficient
+    search and retrieval operations with a time complexity of
+    $O(log n)$. This makes them well-suited for databases, where
+    quick access to data is crucial.
     
-    Also, the self-balancing property of Red-Black trees ensures that it remains balanced during insertions and deletions. This property is vital in databases, because obtaining an asymmetric data structure can result in degraded performances.
+    Also, the self-balancing property of Red-Black trees ensures
+    that it remains balanced during insertions and deletions.
+    This property is vital in databases, because obtaining an
+    asymmetric data structure can result in degraded
+    performances.
     
-    Finally, Red-Black trees are useful for querying a single or range elements, essential operation for a database.
+    Finally, Red-Black trees are useful for querying a single or
+    range elements, essential operation for a database.
     
     
     Red-Black trees are also very useful in file systems.
-    Since they are capable of indexing and maintaining the hierarchical structure of directories in file systems, they permit to efficiently search for files.
+    Since they are capable of indexing and maintaining the
+    hierarchical structure of directories in file systems, they
+    permit to efficiently search for files.
     
-    Also, as files are added or removed, the Red-Black tree's self-balancing property ensures that the directory structure remains balanced. This is important for maintaining quick and consistent file operations, such as searches and deletions.
+    Also, as files are added or removed, the Red-Black tree's
+    self-balancing property ensures that the directory structure
+    remains balanced. This is important for maintaining quick
+    and consistent file operations, such as searches and
+    deletions.
     
     
-    In these two contexts, their are some advantages and trade-off of using Red-Black trees.
-    Red-Black trees guarantee a balanced structure, which results in predictable and efficient performance for various operations, including search, insertion, and deletion.
+    In these two contexts, their are some advantages and
+    trade-off of using Red-Black trees. Red-Black trees
+    guarantee a balanced structure, which results in predictable
+    and efficient performance for various operations, including
+    search, insertion, and deletion.
     
-    Also, the worst-case time complexity for operations on Red-Black trees is O(log n), providing predictable and consistent performance in a variety of scenarios.
+    Also, the worst-case time complexity for operations on
+    Red-Black trees is $O(log n)$, providing predictable and
+    consistent performance in a variety of scenarios.
     
-    Anyway, Red-Black trees require additional space to store color information for each node, which can increase the overall space overhead compared to simpler data structures.
+    Anyway, Red-Black trees require additional space to store
+    color information for each node, which can increase the
+    overall space overhead compared to simpler data structures.
     
-    Moreover, the algorithms for maintaining the Red-Black tree's properties during insertions and deletions are more complex than those for simpler binary search trees, which may lead to slightly slower operations.
+    Moreover, the algorithms for maintaining the Red-Black
+    tree's properties during insertions and deletions are more
+    complex than those for simpler binary search trees, which
+    may lead to slightly slower operations.
     
-    Ultimately, Red-Black trees are a good choice for modern databases and file systems, that require predictable performance. 
-    Anyway, the decision to use Red-Black trees involves trade-offs, such as increased space overhead and algorithmic complexity.
-    The appropriateness of Red-Black trees depends on the specific requirements and characteristics of the application or system.
+    Ultimately, Red-Black trees are a good choice for modern
+    databases and file systems, that require predictable
+    performance. Anyway, the decision to use Red-Black trees
+    involves trade-offs, such as increased space overhead and
+    algorithmic complexity. The appropriateness of Red-Black
+    trees depends on the specific requirements and
+    characteristics of the application or system.
     
 \section{Max Flow Algorithms}
 
@@ -724,7 +809,8 @@ End function
     graphs.
 
 \begin{center}
-    \includegraphics[width=0.65\textwidth]{mf_algorithm_comparison} \\
+    \includegraphics[width=0.65\textwidth]
+        {mf_algorithm_comparison} \\
     The Ford-Fulkerson (FF) algorithm vs the Edmonds-Karp (EK)
     algorithm on randomly generated graphs of various size. \\
     \vskip 1cm
@@ -738,9 +824,11 @@ End function
     in graphs of various sizes.
 
 \begin{center}
-    \includegraphics[width=0.65\textwidth]{mf_passes_comparison.png} \\
+    \includegraphics[width=0.65\textwidth]
+        {mf_passes_comparison.png} \\
     The Ford-Fulkerson (FF) algorithm vs the Edmonds-Karp (EK)
-    algorithm on various graphs, by number of passes required. \\
+    algorithm on various graphs, by number of passes required.
+    \\
     \vskip 1cm
 \end{center}
 

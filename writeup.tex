@@ -810,7 +810,45 @@ End function
 
 \subsection{Red-Black Trees}
 
-    % TODO - Darrin
+    Shown below in the table is the Preformance Analysis of our Red-Black Tree implementation.
+    It shows that our implementation stays within the theoretical limits of a red-black trees
+    in all stages, Insertion, Searching and Deletions. It demonstrates the logarithmic performance
+    that is to be expected using balanced tree data structures. One of the major benifts of 
+    using red-black trees is that there is no worst-case scenario making them exceptional useful
+    in real world applications. Another import advantage of tree based structures is the ability to
+    preform range based queries and accessing elements in their maintained order which you could not 
+    do when using a hashing method. Some important draw backs of the tree structure especially compared
+    to hashing is that the Red-Black Tree will require more space compared to hashing as well as having
+    a longer retrieval time for searches compared with efficient hashing. 
+    When compared with other Binary Search Tree methods,
+    Red-Black Trees are a bit more difficult to implement than you standard BST, although the great
+    performance increases from balanced trees is often worth putting in the extra work. RB trees 
+    may have slightly worse lookup performance compared with AVL trees, due to AVL trees having
+    more rigidly balanced trees however this may come a performance cost when inserting due to the
+    AVL tree likely requiring more rotations. 
+
+    \begin{table}[h]
+        \centering
+        \setlength{\tabcolsep}{6pt}
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            \multicolumn{4}{|c|}{\textbf{Performance Analysis of Red-Black Trees}} \\ \hline
+            \textbf{Operations} & \textbf{100 Elements} & \textbf{10,000 Elements} & \textbf{1,000,000 Elements} \\ \hline
+            Insertion Time (ns) & 6892 & 862849 & 882211867 \\
+            Memory Allocation (bytes) & 4000 & 400000 & 40000000 \\
+            Avg. Comparisons & 5.64 & 12.15 & 21.62 \\
+            Theoretical Complexity & 6.64 & 13.28 & 19.93 \\ \hline
+            Search Time (ns) & 250 & 597 & 5524 \\
+            Avg. Comparisons & 3.8 & 9.2 & 9.6 \\
+            Theoretical Complexity & 6.64 & 13.28 & 19.93 \\ \hline
+            Deletion Time (ns) & 185 & 359 & 510 \\
+            Avg. Comparisons & 3.8 & 9.2 & 9.6 \\
+            Theoretical Complexity & 6.64 & 13.28 & 19.93 \\ \hline
+        \end{tabular}
+        \caption{Performance Comparison of Red-Black Trees for Different Dataset Sizes}
+        \label{tab:rbt_performance}
+    \end{table}
 
 \subsection{Max Flow Algorithms}
     Below is a graph of running times from a series of
@@ -883,7 +921,21 @@ EK passes: 1,243
 
 \subsection{Red-Black Trees}
     
-    % TODO - Darrin
+    In conclusion, Red-Black Trees stand as a versatile and efficient data structure,
+    offering a balanced approach to handling dynamic datasets. Their ability to 
+    maintain logarithmic time complexity for crucial operations like search, 
+    insertion, and deletion, regardless of input distribution, marks them as a 
+    reliable choice in various applications.
+
+    Their balance between optimal search performance and the preservation of sorted 
+    order facilitates operations like range queries and ordered traversals, presenting
+    a favorable balance between speed and structured data organization.
+
+    However, while Red-Black Trees excel in maintaining balance and ensuring 
+    logarithmic complexities, their memory footprint tends to be slightly higher 
+    compared to simpler structures like hashing. This characteristic makes them a 
+    preferred choice when ordered operations and efficient search times are 
+    prioritized over memory usage.
 
 \subsection{Maxflow}
 

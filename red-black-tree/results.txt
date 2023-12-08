@@ -1,0 +1,121 @@
+100 elements
+---------INSERTION-----------------------------------------------
+Time to insert 100 elements:                            6892 nanoseconds
+Total Comparisons to insert 100 elements:               564
+Average Comparisons per element:                        5.64
+The Theoretical Insetion O(log(n)) is:                  6.64386
+Total bytes used for Tree:                              4000
+Size of each node in Tree:                              40
+Theoretical Space complexity O(n) for 100 elements:     4000
+-------------------------------------------------------------------
+-----------Searching-------------------------------------------
+Total Time to complete 5 searches:                      250 nanoseconds
+Total Comparisons for 5 searches:                       19
+Average Comparisons per search:                         3.8
+Theoretical complexity for search(O(logn)):             6.64386
+-------------------------------------------------------------------
+-----------Deleting-------------------------------------------
+Total Time to complete 5 deletions:                     185 nanoseconds
+Total Comparisons for 5 deletions:                      19
+Average Comparisons per deletions:                      3.8
+Theoretical complexity for deletions(O(logn)):          6.64386
+-------------------------------------------------------------------
+
+
+1000 elements
+---------INSERTION-----------------------------------------------
+Time to insert 1000 elements:                           68293 nanoseconds
+Total Comparisons to insert 1000 elements:              8809
+Average Comparisons per element:                        8.809
+The Theoretical Insetion O(log(n)) is:                  9.96578
+Total bytes used for Tree:                              40000
+Size of each node in Tree:                              40
+Theoretical Space complexity O(n) for 1000 elements:    40000
+-------------------------------------------------------------------
+-----------Searching-------------------------------------------
+Total Time to complete 5 searches:                      402 nanoseconds
+Total Comparisons for 5 searches:                       30
+Average Comparisons per search:                         6
+Theoretical complexity for search(O(logn)):             9.96578
+-------------------------------------------------------------------
+-----------Deleting-------------------------------------------
+Total Time to complete 5 deletions:                     293 nanoseconds
+Total Comparisons for 5 deletions:                      30
+Average Comparisons per deletions:                      6
+Theoretical complexity for deletions(O(logn)):          9.96578
+-------------------------------------------------------------------
+
+
+10,000 elements
+---------INSERTION-----------------------------------------------
+Time to insert 10000 elements:                          862849 nanoseconds
+Total Comparisons to insert 10000 elements:             121583
+Average Comparisons per element:                        12.1583
+The Theoretical Insetion O(log(n)) is:                  13.2877
+Total bytes used for Tree:                              400000
+Size of each node in Tree:                              40
+Theoretical Space complexity O(n) for 10000 elements:   400000
+-------------------------------------------------------------------
+-----------Searching-------------------------------------------
+Total Time to complete 5 searches:                      597 nanoseconds
+Total Comparisons for 5 searches:                       46
+Average Comparisons per search:                         9.2
+Theoretical complexity for search(O(logn)):             13.2877
+-------------------------------------------------------------------
+-----------Deleting-------------------------------------------
+Total Time to complete 5 deletions:                     359 nanoseconds
+Total Comparisons for 5 deletions:                      46
+Average Comparisons per deletions:                      9.2
+Theoretical complexity for deletions(O(logn)):          13.2877
+-------------------------------------------------------------------
+
+
+100,000 elements
+---------INSERTION-----------------------------------------------
+Time to insert 100000 elements:                                 22414237 nanoseconds
+Total Comparisons to insert 100000 elements:            1600893
+Average Comparisons per element:                        16.0089
+The Theoretical Insetion O(log(n)) is:                  16.6096
+Total bytes used for Tree:                              4000000
+Size of each node in Tree:                              40
+Theoretical Space complexity O(n) for 100000 elements:  4000000
+-------------------------------------------------------------------
+-----------Searching-------------------------------------------
+Total Time to complete 5 searches:                      1259 nanoseconds
+Total Comparisons for 5 searches:                       53
+Average Comparisons per search:                         10.6
+Theoretical complexity for search(O(logn)):             16.6096
+-------------------------------------------------------------------
+-----------Deleting-------------------------------------------
+Total Time to complete 5 deletions:                     456 nanoseconds
+Total Comparisons for 5 deletions:                      53
+Average Comparisons per deletions:                      10.6
+Theoretical complexity for deletions(O(logn)):          16.6096
+-------------------------------------------------------------------
+
+
+1,000,000 elements
+---------INSERTION-----------------------------------------------
+Time to insert 1000000 elements:                                882211867 nanoseconds
+Total Comparisons to insert 1000000 elements:           21617171
+Average Comparisons per element:                        21.6172
+The Theoretical Insetion O(log(n)) is:                  19.9316
+Total bytes used for Tree:                              40000000
+Size of each node in Tree:                              40
+Theoretical Space complexity O(n) for 1000000 elements: 40000000
+-------------------------------------------------------------------
+-----------Searching-------------------------------------------
+Total Time to complete 5 searches:                      5524 nanoseconds
+Total Comparisons for 5 searches:                       48
+Average Comparisons per search:                         9.6
+Theoretical complexity for search(O(logn)):             19.9316
+-------------------------------------------------------------------
+-----------Deleting-------------------------------------------
+Total Time to complete 5 deletions:                     510 nanoseconds
+Total Comparisons for 5 deletions:                      48
+Average Comparisons per deletions:                      9.6
+Theoretical complexity for deletions(O(logn)):          19.9316
+-------------------------------------------------------------------
+
+10,000,000 elements
+Segmentation fault

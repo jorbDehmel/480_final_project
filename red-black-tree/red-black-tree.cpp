@@ -1,6 +1,12 @@
 #include <iostream>
+#include <chrono>
+#include <cmath>
 
 using namespace std;
+
+int comparisons = 0;
+unsigned long long total_bytes_used = 0;
+
 
 struct Node {
 	int data; 
@@ -19,7 +25,6 @@ private:
 	NodePtr TNULL;
 
 	// initializes the nodes with appropirate values
-	// all the pointers are set to point to the null pointer
 	void initializeNULLNode(NodePtr node, NodePtr parent) {
 		node->data = 0;
 		node->parent = parent;
@@ -28,26 +33,26 @@ private:
 		node->color = 0;
 	}
 
-	void preOrderHelper(NodePtr node) {
+	void preOrder(NodePtr node) {
 		if (node != TNULL) {
 			cout<<node->data<<" ";
-			preOrderHelper(node->left);
-			preOrderHelper(node->right);
+			preOrder(node->left);
+			preOrder(node->right);
 		} 
 	}
 
-	void inOrderHelper(NodePtr node) {
+	void inOrder(NodePtr node) {
 		if (node != TNULL) {
-			inOrderHelper(node->left);
+			inOrder(node->left);
 			cout<<node->data<<" ";
-			inOrderHelper(node->right);
+			inOrder(node->right);
 		} 
 	}
 
-	void postOrderHelper(NodePtr node) {
+	void postOrder(NodePtr node) {
 		if (node != TNULL) {
-			postOrderHelper(node->left);
-			postOrderHelper(node->right);
+			postOrder(node->left);
+			postOrder(node->right);
 			cout<<node->data<<" ";
 		} 
 	}
@@ -56,12 +61,15 @@ private:
 		if (node == TNULL || key == node->data) {
 			return node;
 		}
-
+		comparisons++;
 		if (key < node->data) {
-			return searchTree(node->left, key);
+			NodePtr leftResult = searchTree(node->left, key);
+			return leftResult == TNULL ? nullptr : leftResult;
 		} 
-		return searchTree(node->right, key);
+		NodePtr rightResult = searchTree(node->right, key);
+		return rightResult == TNULL ? nullptr : rightResult;
 	}
+
 
 	// fix the rb tree modified by the delete operation
 	void fixDelete(NodePtr x) {
@@ -132,7 +140,6 @@ private:
 		x->color = 0;
 	}
 
-
 	void rbTransplant(NodePtr u, NodePtr v){
 		if (u->parent == nullptr) {
 			root = v;
@@ -144,7 +151,7 @@ private:
 		v->parent = u->parent;
 	}
 
-	void deleteNodeHelper(NodePtr node, int key) {
+	void deleteNode(NodePtr node, int key) {
 		// find the node containing key
 		NodePtr z = TNULL;
 		NodePtr x, y;
@@ -158,6 +165,7 @@ private:
 			} else {
 				node = node->left;
 			}
+			comparisons++;
 		}
 
 		if (z == TNULL) {
@@ -247,8 +255,7 @@ private:
 		root->color = 0;
 	}
 
-	void printHelper(NodePtr root, string indent, bool last) {
-		// print the tree structure on the screen
+	void print(NodePtr root, string indent, bool last) {
 	   	if (root != TNULL) {
 		   cout<<indent;
 		   if (last) {
@@ -261,10 +268,17 @@ private:
             
            string sColor = root->color?"RED":"BLACK";
 		   cout<<root->data<<"("<<sColor<<")"<<endl;
-		   printHelper(root->left, indent, false);
-		   printHelper(root->right, indent, true);
+		   print(root->left, indent, false);
+		   print(root->right, indent, true);
 		}
-		// cout<<root->left->data<<endl;
+	}
+
+	size_t calculateMemoryUsage(NodePtr node) {
+		if (node == TNULL) {
+			return 0;
+		}
+		// Size of current node + sizes of left and right subtrees
+		return sizeof(Node) + calculateMemoryUsage(node->left) + calculateMemoryUsage(node->right);
 	}
 
 public:
@@ -277,30 +291,29 @@ public:
 	}
 
 	// Pre-Order traversal
-	// Node->Left Subtree->Right Subtree
+	// Node->Left->Right
 	void preorder() {
-		preOrderHelper(this->root);
+		preOrder(this->root);
 	}
 
 	// In-Order traversal
-	// Left Subtree -> Node -> Right Subtree
+	// Left->Node->Right
 	void inorder() {
-		inOrderHelper(this->root);
+		inOrder(this->root);
 	}
 
 	// Post-Order traversal
-	// Left Subtree -> Right Subtree -> Node
+	// Left->Right->Node
 	void postorder() {
-		postOrderHelper(this->root);
+		postOrder(this->root);
 	}
 
-	// search the tree for the key k
-	// and return the corresponding node
+	//Search for value k
 	NodePtr searchTree(int k) {
 		return searchTree(this->root, k);
 	}
 
-	// find the node with the minimum key
+	// return node with min value
 	NodePtr minimum(NodePtr node) {
 		while (node->left != TNULL) {
 			node = node->left;
@@ -308,49 +321,12 @@ public:
 		return node;
 	}
 
-	// find the node with the maximum key
+	// return node with max value
 	NodePtr maximum(NodePtr node) {
 		while (node->right != TNULL) {
 			node = node->right;
 		}
 		return node;
-	}
-
-	// find the successor of a given node
-	NodePtr successor(NodePtr x) {
-		// if the right subtree is not null,
-		// the successor is the leftmost node in the
-		// right subtree
-		if (x->right != TNULL) {
-			return minimum(x->right);
-		}
-
-		// else it is the lowest ancestor of x whose
-		// left child is also an ancestor of x.
-		NodePtr y = x->parent;
-		while (y != TNULL && x == y->right) {
-			x = y;
-			y = y->parent;
-		}
-		return y;
-	}
-
-	// find the predecessor of a given node
-	NodePtr predecessor(NodePtr x) {
-		// if the left subtree is not null,
-		// the predecessor is the rightmost node in the 
-		// left subtree
-		if (x->left != TNULL) {
-			return maximum(x->left);
-		}
-
-		NodePtr y = x->parent;
-		while (y != TNULL && x == y->left) {
-			x = y;
-			y = y->parent;
-		}
-
-		return y;
 	}
 
 	// rotate left at node x
@@ -391,8 +367,7 @@ public:
 		x->parent = y;
 	}
 
-	// insert the key to the tree in its appropriate position
-	// and fix the tree
+	// insert the key to the tree in its appropriate position then fix the tree
 	void insert(int key) {
 		// Ordinary Binary Search Insertion
 		NodePtr node = new Node;
@@ -401,6 +376,7 @@ public:
 		node->left = TNULL;
 		node->right = TNULL;
 		node->color = 1; // new node must be red
+
 
 		NodePtr y = nullptr;
 		NodePtr x = this->root;
@@ -412,7 +388,9 @@ public:
 			} else {
 				x = x->right;
 			}
+			comparisons++;
 		}
+		total_bytes_used += sizeof(y);
 
 		// y is parent of x
 		node->parent = y;
@@ -445,29 +423,104 @@ public:
 
 	// delete the node from the tree
 	void deleteNode(int data) {
-		deleteNodeHelper(this->root, data);
+		deleteNode(this->root, data);
 	}
 
-	// print the tree structure on the screen
+	// print the tree structure
 	void prettyPrint() {
 	    if (root) {
-    		printHelper(this->root, "", true);
+    		print(this->root, "", true);
 	    }
+	}
+
+	size_t calculateMemoryUsage(){
+		return calculateMemoryUsage(this->root);
 	}
 
 };
 
+
 int main() {
+	const int ARRAY_SIZE = 10000000;
 	RBTree bst;
-	bst.insert(8);
-	bst.insert(18);
-	bst.insert(5);
-	bst.insert(15);
-	bst.insert(17);
-	bst.insert(25);
-	bst.insert(40);
-	bst.insert(80);
-	bst.deleteNode(25);
-	bst.prettyPrint();
+	int array[ARRAY_SIZE];
+	srand(time(NULL));
+	for (int i=0; i<ARRAY_SIZE; i++){
+		array[i] = rand() % 10000;
+	}
+
+
+	//Insert
+	auto begin = chrono::high_resolution_clock::now();
+	for (int i = 0; i < ARRAY_SIZE; i++)
+	{
+		bst.insert(array[i]);
+	}
+	auto end = chrono::high_resolution_clock::now();
+	auto elapsed = chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+	cout << "---------INSERTION-----------------------------------------------" << endl;
+	cout << "Time to insert " << ARRAY_SIZE << " elements: 				" << elapsed << " nanoseconds" << endl; 
+	cout << "Total Comparisons to insert " << ARRAY_SIZE << " elements: 		" << comparisons << endl;
+	cout << "Average Comparisons per element: 			" << float(comparisons)/ARRAY_SIZE << endl;
+	cout << "The Theoretical Insetion O(log(n)) is: 			" << log2(float(ARRAY_SIZE)) << endl;
+	cout << "Total bytes used for Tree: 				" << bst.calculateMemoryUsage() << endl;
+	cout << "Size of each node in Tree: 				" << sizeof(Node) << endl;
+	cout << "Theoretical Space complexity O(n) for " << ARRAY_SIZE << " elements:	" << ARRAY_SIZE*sizeof(Node) << endl;
+	cout << "-------------------------------------------------------------------" << endl;
+
+	//Search
+	int array_jump = ARRAY_SIZE * 0.2;
+    int search_array[5] = {array[0],array[array_jump],array[2*array_jump],array[3*array_jump],array[4*array_jump]};
+	comparisons = 0;
+	NodePtr result;
+	begin = chrono::high_resolution_clock::now();
+	for(int i = 0; i < 5; i++) {
+		result = bst.searchTree(search_array[i]);
+		if (result == nullptr) {
+			cout << search_array[i] << " Not found in tree" << endl;
+		} else {
+			//cout << search_array[i] << " Found in tree" << endl;
+		}
+	}
+	end = chrono::high_resolution_clock::now();
+	elapsed = chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+	cout << "-----------Searching-------------------------------------------" << endl;
+	cout << "Total Time to complete 5 searches:			" << elapsed << " nanoseconds" << endl;
+	cout << "Total Comparisons for 5 searches: 			" << comparisons << endl;
+	cout << "Average Comparisons per search:				" << float(comparisons)/5 << endl;
+	cout << "Theoretical complexity for search(O(logn)):		" << log2(ARRAY_SIZE) << endl;
+	cout << "-------------------------------------------------------------------" << endl;
+
+
+	//Delete
+	comparisons = 0;
+	begin = chrono::high_resolution_clock::now();
+	for(int i = 0; i < 5; i++) {
+		result = bst.searchTree(search_array[i]);
+		if (result == nullptr) {
+			cout << search_array[i] << " Not found in tree" << endl;
+		} else {
+			//cout << search_array[i] << " Found in tree" << endl;
+		}
+	}
+	end = chrono::high_resolution_clock::now();
+	elapsed = chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+	elapsed = chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+	cout << "-----------Deleting-------------------------------------------" << endl;
+	cout << "Total Time to complete 5 deletions:			" << elapsed << " nanoseconds" << endl;
+	cout << "Total Comparisons for 5 deletions: 			" << comparisons << endl;
+	cout << "Average Comparisons per deletions:			" << float(comparisons)/5 << endl;
+	cout << "Theoretical complexity for deletions(O(logn)):		" << log2(ARRAY_SIZE) << endl;
+	cout << "-------------------------------------------------------------------" << endl;
+
+
+	//bst.prettyPrint();
+
+
 	return 0;
 }
+
+
+/* This code is derivative of the code found at this git repo
+https://github.com/Bibeknam/algorithmtutorprograms/blob/master/data-structures/red-black-trees/RedBlackTree.cpp
+some parts have been implemented independent of this code base but the deletion section comes from this code*/

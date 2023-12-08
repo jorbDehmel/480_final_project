@@ -2,12 +2,13 @@ CC := clang++
 CFLAGS := -pedantic -Wall -g -c -O3
 LFLAGS := -pedantic -Wall -g -O3
 
-all:	rbt
+all : rbt.out
 
-run : rbt
-	./rbt
+run : rbt.out
+	./rbt.out
+	rm rbt.out
 
-rbt:	red-black-tree.cpp
+rbt.out:	red-black-tree.cpp
 	$(CC) $(LFLAGS) -o $@ $^
 
 
